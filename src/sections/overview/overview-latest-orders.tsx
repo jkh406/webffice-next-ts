@@ -16,7 +16,6 @@ import {
   TableRow
 } from '@mui/material';
 import { Scrollbar } from 'components/scrollbar';
-import { SeverityPill } from 'components/severity-pill';
 
 const statusMap  : any = {
   pending: 'warning',
@@ -68,9 +67,6 @@ export const OverviewLatestOrders = (props : any) => {
                       {createdAt}
                     </TableCell>
                     <TableCell>
-                      <SeverityPill color={statusMap[order.status]}>
-                        {order.status}
-                      </SeverityPill>
                     </TableCell>
                   </TableRow>
                 );

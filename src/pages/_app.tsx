@@ -8,6 +8,7 @@ import { AuthConsumer, AuthProvider } from 'contexts/auth-context';
 import { useNProgress } from 'hooks/use-nprogress';
 import { createTheme } from 'theme';
 import { createEmotionCache } from 'utils/create-emotion-cache';
+import 'styles/calendar.scss'
 
 const clientSideEmotionCache = createEmotionCache();
 

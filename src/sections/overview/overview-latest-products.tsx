@@ -17,14 +17,14 @@ import {
   SvgIcon
 } from '@mui/material';
 
-export const OverviewLatestProducts = (props) => {
+export const OverviewLatestProducts = (props : any) => {
   const { products = [], sx } = props;
 
   return (
     <Card sx={sx}>
       <CardHeader title="Latest Products" />
       <List>
-        {products.map((product, index) => {
+        {products.map((product : any, index : any) => {
           const hasDivider = index < products.length - 1;
           const ago = formatDistanceToNow(product.updatedAt);
 
