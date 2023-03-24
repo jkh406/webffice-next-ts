@@ -3,21 +3,19 @@ import isBetweenPlugin from 'dayjs/plugin/isBetween';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Stack, Paper, Container } from '@mui/material';
-import { makeStyles } from '@mui/styles'
-import {
-  EventApi,
-  DateSelectArg,
-  EventClickArg,
-  EventContentArg,
-  formatDate,
-} from '@fullcalendar/core';
+import { EventApi, DateSelectArg, EventClickArg, EventContentArg, } from '@fullcalendar/core';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { INITIAL_EVENTS, createEventId } from 'utils/event-utils';
-import React, { useState, Dispatch  } from 'react';
+import { createEventId } from 'utils/event-utils';
+import React, { useState, useEffect, useContext } from 'react';
+import scheduleApi from 'service/schedule-api';
+import { EventInput } from '@fullcalendar/core'
+import { AuthContext } from 'contexts/auth-context';
 
+
+let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
 dayjs.extend(isBetweenPlugin);
 
 export interface ScheduleState {
@@ -25,18 +23,6 @@ export interface ScheduleState {
   currentEvents: EventApi[] | undefined;
 }
 
-
-const useStyles = makeStyles((theme : any) => ({
-  paper: {
-    padding: theme.spacing(0),
-  },
-}));
-
-const handleEventClick = (clickInfo: EventClickArg) => {
-  if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
-    clickInfo.event.remove()
-  }
-};
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -47,26 +33,60 @@ function renderEventContent(eventContent: EventContentArg) {
   )
 }
 
-
-const handleDateSelect = (selectInfo: DateSelectArg) => {
-  let title = prompt('이벤트의 새 제목을 입력하세요.')
-  let calendarApi = selectInfo.view.calendar
-
-  calendarApi.unselect() // clear date selection
-
-  if (title) {
-    calendarApi.addEvent({
-      id: createEventId(),
-      title,
-      start: selectInfo.startStr,
-      end: selectInfo.endStr,
-      allDay: selectInfo.allDay
-    })
-  }
-}
-
 export function CustomSchedule() {
-  const classes = useStyles();
+  const user = useContext(AuthContext);
+  console.log("user", user);
+
+  useEffect(() => {
+    console.log("useEffect Start!!!");
+    scheduleApi.selectBoardList('test')
+    .then( res => {
+      if(!res.data.email)
+      {
+        console.log("test", res.data.email);
+        throw new Error('계정이 존재하지 않습니다.');
+      }
+    })
+    .catch(err => {
+      console.log('loadUser() 에러', err);
+    });
+  });
+  
+  const INITIAL_EVENTS: EventInput[] = [
+    {
+      id: createEventId(),
+      title: 'Test event',
+      start: todayStr
+    },
+    {
+      id: createEventId(),
+      title: 'Test event',
+      start: todayStr + 'T12:00:00'
+    }
+  ]
+  
+  const handleEventClick = (clickInfo: EventClickArg) => {
+    if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
+      clickInfo.event.remove()
+    }
+  };
+  
+  const handleDateSelect = (selectInfo: DateSelectArg) => {
+    let title = prompt('이벤트의 새 제목을 입력하세요.')
+    let calendarApi = selectInfo.view.calendar
+
+    calendarApi.unselect() // clear date selection
+
+    if (title) {
+      calendarApi.addEvent({
+        id: createEventId(),
+        title,
+        start: selectInfo.startStr,
+        end: selectInfo.endStr,
+        allDay: selectInfo.allDay
+      })
+    }
+  }
 
   const [state, setState] = useState<ScheduleState | null>({
     weekendsVisible: true,
@@ -83,7 +103,7 @@ export function CustomSchedule() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Container>
-        <Paper className={classes.paper}>
+        <Paper >
           <Stack spacing={0}>
             <FullCalendar
               plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
@@ -99,11 +119,11 @@ export function CustomSchedule() {
               weekends={state?.weekendsVisible}
               selectable={true}
               selectMirror={true}
-              eventContent={renderEventContent} // custom render function
-              eventsSet={handleEvents} // called after events are initialized/added/changed/removed
+              eventContent={renderEventContent} 
+              eventsSet={handleEvents} 
               eventClick={handleEventClick}
               dayMaxEvents={true}
-              initialEvents={INITIAL_EVENTS} // alternatively, use the `events` setting to fetch from a feed
+              initialEvents={INITIAL_EVENTS}
             />
           </Stack>
         </Paper>
