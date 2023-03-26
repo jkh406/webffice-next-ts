@@ -9,20 +9,20 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { createEventId } from 'utils/event-utils';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import scheduleApi from 'service/schedule-api';
 import { EventInput } from '@fullcalendar/core'
-import { AuthContext } from 'contexts/auth-context';
+import { useAuthContext } from 'contexts/auth-context';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
 dayjs.extend(isBetweenPlugin);
 
-export interface ScheduleState {
+export interface Eventstate {
   weekendsVisible: boolean | undefined;
   currentEvents: EventApi[] | undefined;
 }
-
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -34,37 +34,45 @@ function renderEventContent(eventContent: EventContentArg) {
 }
 
 export function CustomSchedule() {
-  const user = useContext(AuthContext);
-  console.log("user", user);
 
-  useEffect(() => {
+
+  const { user } = useAuthContext();
+  const [eventValue, setEventValue] = useState<Eventstate | null>({
+    weekendsVisible: true,
+    currentEvents: []
+  })
+  const [ boardValue, SetBoardValue ] : any = useState([{
+      id: '',
+      title: '',
+      start: ''
+    }]);
+  let [newBoardValue, SetNewBoardValue ] : any = useState();
+
+  useEffect( () => {
     console.log("useEffect Start!!!");
-    scheduleApi.selectBoardList('test')
+     scheduleApi.selectBoardList(user.email)
     .then( res => {
-      if(!res.data.email)
-      {
-        console.log("test", res.data.email);
-        throw new Error('계정이 존재하지 않습니다.');
+      SetNewBoardValue(res.data.map((rowData: { board_id: any; board_title: any; start_date: any; }) => ({
+        id: rowData.board_id,
+        title: rowData.board_title,
+        start: rowData.start_date
       }
+      )));
+
+      SetBoardValue([...boardValue, newBoardValue]);
+
+      return() =>
+      {
+        console.log('return() ', INITIAL_EVENTS);
+        <FullCalendar initialEvents={INITIAL_EVENTS}></FullCalendar>
+      }
+
     })
     .catch(err => {
-      console.log('loadUser() 에러', err);
+      console.log('selectBoardList() 에러', err);
     });
-  });
-  
-  const INITIAL_EVENTS: EventInput[] = [
-    {
-      id: createEventId(),
-      title: 'Test event',
-      start: todayStr
-    },
-    {
-      id: createEventId(),
-      title: 'Test event',
-      start: todayStr + 'T12:00:00'
-    }
-  ]
-  
+  },[]);
+
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
       clickInfo.event.remove()
@@ -87,14 +95,11 @@ export function CustomSchedule() {
       })
     }
   }
+  const INITIAL_EVENTS : EventInput[] = newBoardValue;
+  console.log('INITIAL_EVENTS', newBoardValue);
 
-  const [state, setState] = useState<ScheduleState | null>({
-    weekendsVisible: true,
-    currentEvents: []
-  })
-  
   const handleEvents = (events: EventApi[]) => {
-    setState({
+    setEventValue({
       currentEvents: events,
       weekendsVisible: true,
     })
@@ -116,7 +121,7 @@ export function CustomSchedule() {
               editable={true}
               locale='ko'
               select={handleDateSelect}
-              weekends={state?.weekendsVisible}
+              weekends={eventValue?.weekendsVisible}
               selectable={true}
               selectMirror={true}
               eventContent={renderEventContent} 
