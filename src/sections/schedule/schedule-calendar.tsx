@@ -8,21 +8,28 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import { createEventId } from 'utils/event-utils';
 import React, { useState, useEffect } from 'react';
 import scheduleApi from 'service/schedule-api';
 import { EventInput } from '@fullcalendar/core'
 import { useAuthContext } from 'contexts/auth-context';
 import { useDispatch, useSelector } from 'react-redux';
-
-
-let todayStr = new Date().toISOString().replace(/T.*$/, '') // YYYY-MM-DD of today
-dayjs.extend(isBetweenPlugin);
+import { selectSchedule, insertSchedule, deleteSchedule } from "store/slice/scheduleslice"
+import { customAlphabet } from "nanoid";
 
 export interface Eventstate {
   weekendsVisible: boolean | undefined;
   currentEvents: EventApi[] | undefined;
 }
+
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-", 10);
+
+const INITIAL_EVENTS : EventInput[] = [    
+  {
+      id: '',
+      title: '',
+      start: ''
+    }
+]
 
 function renderEventContent(eventContent: EventContentArg) {
   return (
@@ -34,60 +41,70 @@ function renderEventContent(eventContent: EventContentArg) {
 }
 
 export function CustomSchedule() {
+  const scheduleslice = useSelector((state : any) => state.schedule)
+  const dispatch = useDispatch();
 
+  const [nanoValue, setNanoValue] = useState({
+    code: "",
+  });
 
   const { user } = useAuthContext();
-  const [eventValue, setEventValue] = useState<Eventstate | null>({
+  const [eventValue, setEventValue] : any = useState({
     weekendsVisible: true,
     currentEvents: []
   })
-  const [ boardValue, SetBoardValue ] : any = useState([{
-      id: '',
-      title: '',
-      start: ''
-    }]);
-  let [newBoardValue, SetNewBoardValue ] : any = useState();
 
   useEffect( () => {
-    console.log("useEffect Start!!!");
-     scheduleApi.selectBoardList(user.email)
+    setNanoValue((prev) => ({ ...prev, code: nanoid() }));
+
+     scheduleApi.selectScheduleList(user.email)
     .then( res => {
-      SetNewBoardValue(res.data.map((rowData: { board_id: any; board_title: any; start_date: any; }) => ({
+      window.localStorage.setItem("userID", JSON.stringify(user.email))
+      dispatch(selectSchedule(res.data.map((rowData: any ) => ({
         id: rowData.board_id,
         title: rowData.board_title,
         start: rowData.start_date
       }
-      )));
-
-      SetBoardValue([...boardValue, newBoardValue]);
-
-      return() =>
-      {
-        console.log('return() ', INITIAL_EVENTS);
-        <FullCalendar initialEvents={INITIAL_EVENTS}></FullCalendar>
-      }
+      ))));
 
     })
     .catch(err => {
-      console.log('selectBoardList() 에러', err);
+      console.log('selectBoardList() Error', err);
     });
   },[]);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
-      clickInfo.event.remove()
+      console.log('clickInfo =', clickInfo);
+      console.log('clickInfo =', clickInfo.event._def.publicId);
+      
+      dispatch(deleteSchedule({
+        publicId : clickInfo.event._def.publicId
+      }));
+
+      clickInfo.event.remove();
     }
   };
   
   const handleDateSelect = (selectInfo: DateSelectArg) => {
-    let title = prompt('이벤트의 새 제목을 입력하세요.')
+    let title : any = prompt('이벤트의 새 제목을 입력하세요.')
     let calendarApi = selectInfo.view.calendar
-
+    
+    setNanoValue((prev) => ({ ...prev, code: nanoid() }));
     calendarApi.unselect() // clear date selection
+
+    dispatch(insertSchedule({
+      board_id: nanoValue.code,
+      board_title : title,
+      start_date: selectInfo.startStr,
+      end_date: selectInfo.endStr,
+      chk_allDay: selectInfo.allDay.toString(),
+      register_id : user.email
+    }));
 
     if (title) {
       calendarApi.addEvent({
-        id: createEventId(),
+        id: nanoValue.code,
         title,
         start: selectInfo.startStr,
         end: selectInfo.endStr,
@@ -95,8 +112,6 @@ export function CustomSchedule() {
       })
     }
   }
-  const INITIAL_EVENTS : EventInput[] = newBoardValue;
-  console.log('INITIAL_EVENTS', newBoardValue);
 
   const handleEvents = (events: EventApi[]) => {
     setEventValue({
@@ -120,14 +135,15 @@ export function CustomSchedule() {
               initialView='dayGridMonth'
               editable={true}
               locale='ko'
-              select={handleDateSelect}
               weekends={eventValue?.weekendsVisible}
               selectable={true}
               selectMirror={true}
+              dayMaxEvents={true}
+              select={handleDateSelect}
+              events={scheduleslice.board}
               eventContent={renderEventContent} 
               eventsSet={handleEvents} 
               eventClick={handleEventClick}
-              dayMaxEvents={true}
               initialEvents={INITIAL_EVENTS}
             />
           </Stack>

@@ -5,6 +5,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Provider } from "react-redux";
+import { store } from "store/configureStore"
 import { AuthConsumer, AuthProvider } from 'contexts/auth-context';
 import { useNProgress } from 'hooks/use-nprogress';
 import { createTheme } from 'theme';
@@ -12,10 +13,10 @@ import { createEmotionCache } from 'utils/create-emotion-cache';
 import 'styles/calendar.scss'
 
 const clientSideEmotionCache = createEmotionCache();
-
 const SplashScreen  = () : null => null;
 
 const App = (props : any) => {
+  
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
 
   useNProgress();
@@ -39,13 +40,15 @@ const App = (props : any) => {
         <AuthProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline /> 
-            <AuthConsumer>
-              {
-                (auth : any) => auth.isLoading
-                  ? <SplashScreen />
-                  : getLayout(<Component {...pageProps} />) 
-              }
-            </AuthConsumer>
+            <Provider store={store}>
+              <AuthConsumer>
+                {
+                  (auth : any) => auth.isLoading
+                    ? <SplashScreen />
+                    : getLayout(<Component {...pageProps} />) 
+                }
+              </AuthConsumer> 
+            </Provider>
           </ThemeProvider>
         </AuthProvider>
       </LocalizationProvider>
