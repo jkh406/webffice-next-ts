@@ -56,7 +56,6 @@ export function CustomSchedule() {
 
   useEffect( () => {
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
-
      scheduleApi.selectScheduleList(user.email)
     .then( res => {
       window.localStorage.setItem("userID", JSON.stringify(user.email))

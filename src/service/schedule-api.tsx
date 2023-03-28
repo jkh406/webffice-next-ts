@@ -15,7 +15,8 @@ class ScheduleApi {
   }
 
   deleteScheduleList(ScheduleId: any){
-    return axios.delete(USER_API_BASE_URL + '/' + ScheduleId);
+    console.log('Delete Id = ', ScheduleId.publicId)
+    return axios.delete(USER_API_BASE_URL + '/' + ScheduleId.publicId);
   }
 }
 

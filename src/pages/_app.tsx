@@ -10,7 +10,7 @@ import { AuthConsumer, AuthProvider } from 'contexts/auth-context';
 import { useNProgress } from 'hooks/use-nprogress';
 import { createTheme } from 'theme';
 import { createEmotionCache } from 'utils/create-emotion-cache';
-import 'styles/calendar.scss'
+import 'styles/calendar.scss';
 
 const clientSideEmotionCache = createEmotionCache();
 const SplashScreen  = () : null => null;
@@ -54,6 +54,8 @@ const App = (props : any) => {
       </LocalizationProvider>
     </CacheProvider>
   );
+
 };
+
 
 export default App;
