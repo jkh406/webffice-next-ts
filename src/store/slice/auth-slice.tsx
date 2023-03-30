@@ -26,19 +26,20 @@ const initialAuthState: AuthState = {
 
 // 로그인
 export const loginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {rejectWithValue, getState, dispatch}) => {
-        AuthApi.loginUser(user.userId, user.userPw)
-        .then( response => {
-            console.log('response()', response);
-          dispatch(login(response.data.data));
-        })
-        .catch(error => {
-            if (error.response.status === 400) {
-                alert("아이디 혹은 비밀번호를 확인해주세요" + error)
-            }else {
-                alert ("서버에 일시적으로 문제가 생겼습니다. 잠시후 다시 시도해주세요.")
-            }
-          console.log('selectBoardList() Error', error);
-        });
+    try {
+        const response = await AuthApi.loginUser(user.userId, user.userPw);
+        console.log("response data = ", response);
+        dispatch(login(response.data.data));
+        return response.data;
+    }catch (error: any) {
+        console.log(error);
+        if (error.response.status === 400) {
+            alert("아이디 혹은 비밀번호를 확인해주세요" + error)
+        }else {
+            alert ("서버에 일시적으로 문제가 생겼습니다. 잠시후 다시 시도해주세요.")
+        }
+        return error?.response;
+    }
 });
 // 회원가입
 export const join = createAsyncThunk("JOIN_USER", async (user: UserType, {rejectWithValue, getState, dispatch}) => {
