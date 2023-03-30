@@ -1,5 +1,3 @@
-import dayjs, { Dayjs } from 'dayjs';
-import isBetweenPlugin from 'dayjs/plugin/isBetween';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Stack, Paper, Container } from '@mui/material';
@@ -13,7 +11,7 @@ import scheduleApi from 'service/schedule-api';
 import { EventInput } from '@fullcalendar/core'
 import { useAuthContext } from 'contexts/auth-context';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectSchedule, insertSchedule, deleteSchedule } from "store/slice/scheduleslice"
+import { selectSchedule, insertSchedule, deleteSchedule } from "store/slice/schedule-slice"
 import { customAlphabet } from "nanoid";
 
 export interface Eventstate {

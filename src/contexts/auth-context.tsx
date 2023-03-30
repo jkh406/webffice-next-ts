@@ -2,6 +2,9 @@ import { createContext, useContext, useEffect, useReducer, useRef, Component } f
 import PropTypes from 'prop-types';
 import ApiService from "service/apiservice"
 import authApi from 'service/auth-api';
+import { login, logout, setToken } from 'store/slice/auth-slice'
+import { useAppDispatch } from 'hooks/use-auth'
+import { useDispatch, useSelector } from 'react-redux';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -60,7 +63,7 @@ export const AuthContext = createContext({ undefined });
 
 export const AuthProvider = (props : any) => {
   const { children } = props;
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, setState] = useReducer(reducer, initialState);
   const initialized = useRef(false);
 
   const initialize = async () => {
@@ -87,12 +90,12 @@ export const AuthProvider = (props : any) => {
         email: 'admin@anbtech.co.kr'
       };
 
-      dispatch({
+      setState({
         type: HANDLERS.INITIALIZE,
         payload: user
       });
     } else {
-      dispatch({
+      setState({
         type: HANDLERS.INITIALIZE
       });
     }
@@ -119,15 +122,14 @@ export const AuthProvider = (props : any) => {
       email: 'SKIP@anbtech.co.kr'
     };
 
-    dispatch({
+    setState({
       type: HANDLERS.SIGN_IN,
       payload: user
     });
   };
 
   const signIn = async (_email : any, _password : any) => {
-
-    authApi.loginUser(_email, _password)
+    await authApi.loginUser(_email, _password)
     .then( res => {
       const user = {
         id: res.data.id,
@@ -135,13 +137,9 @@ export const AuthProvider = (props : any) => {
         name: res.data.name,
         email: res.data.email
       };
-      try {
-        window.sessionStorage.setItem('authenticated', 'true');
-      } catch (err) {
-        console.error(err);
-      }
+      window.sessionStorage.setItem('authenticated', 'true');
   
-      dispatch({
+      setState({
         type: HANDLERS.SIGN_IN,
         payload: user
       });
@@ -184,7 +182,7 @@ export const AuthProvider = (props : any) => {
   };
 
   const signOut = () => {
-    dispatch({
+    setState({
       type: HANDLERS.SIGN_OUT
     });
   };

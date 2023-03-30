@@ -24,7 +24,6 @@ export const scheduleSlice = createSlice({
     name: 'schedule',
     initialState,
     reducers: {
-      	// anonymous function
         selectSchedule: (state : any, action : any) => {
           const board = action.payload; 
           return {
@@ -55,5 +54,4 @@ export const scheduleSlice = createSlice({
 });
 
 export const { selectSchedule, insertSchedule, deleteSchedule } = scheduleSlice.actions;
-
 export default scheduleSlice.reducer;

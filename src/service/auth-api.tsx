@@ -1,5 +1,4 @@
 import axios from "axios";
-import qs from "qs";
 
 const USER_API_BASE_URL = "http://localhost:8080/api/v1";
 
@@ -25,8 +24,10 @@ class AuthApi {
         return axios.delete(USER_API_BASE_URL + '/' + userID);
     }
       
-    addUser(user: any){
-        return axios.post(USER_API_BASE_URL, user);
+    addUser(_email : any, _password : any){
+        return axios.post(USER_API_BASE_URL + "/join", {
+            userId : _email, userPw : _password
+        });
     }
     
     editUser(user: any){

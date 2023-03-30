@@ -1,10 +1,16 @@
 import { configureStore } from "@reduxjs/toolkit";
-import scheduleSlice from "store/slice/scheduleslice";
+import scheduleSlice from "./slice/schedule-slice";
+import authSlice from "./slice/auth-slice";
 
 export const store = configureStore({
     reducer: {
         schedule: scheduleSlice,
+        auth: authSlice
     },
+    middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
     devTools: true
 })
 

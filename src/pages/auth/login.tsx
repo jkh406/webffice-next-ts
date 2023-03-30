@@ -4,23 +4,15 @@ import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import {
-  Alert,
-  Box,
-  Button,
-  FormHelperText,
-  Link,
-  Stack,
-  Tab,
-  Tabs,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Alert, Box, Button, FormHelperText, Link, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useAuth } from 'hooks/use-auth';
 import { Layout as AuthLayout } from 'layouts/auth/layout';
+import { useAppDispatch } from 'hooks/use-auth';
+import { loginUser } from 'store/slice/auth-slice';
 
 const Page = () => {
   const router = useRouter();
+  const dispatch = useAppDispatch();
   const auth : any = useAuth();
   const [method, setMethod] = useState('email');
   const formik = useFormik({
@@ -42,7 +34,12 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await auth.signIn(values.email, values.password);
+        // await auth.signIn(values.email, values.password);
+        await dispatch(loginUser({
+          userId: values.email,
+          userPw: values.password
+        }));
+        console.log('values',values);
         router.push('/');
       } catch (err : any) {
         helpers.setStatus({ success: false });
