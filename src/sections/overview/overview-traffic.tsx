@@ -12,7 +12,6 @@ import {
   Typography,
   useTheme
 } from '@mui/material';
-import { Chart } from 'components/chart';
 
 const useChartOptions = (labels : any) => {
   const theme = useTheme();
@@ -88,13 +87,6 @@ export const OverviewTraffic = (props : any) => {
     <Card sx={sx}>
       <CardHeader title="Traffic Source" />
       <CardContent>
-        <Chart
-          height={300}
-          options={chartOptions}
-          series={chartSeries}
-          type="donut"
-          width="100%"
-        />
         <Stack
           alignItems="center"
           direction="row"

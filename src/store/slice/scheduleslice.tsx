@@ -1,6 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import scheduleApi from 'service/schedule-api';
-import { boolean } from "yup";
 
 const initialState = [
   {

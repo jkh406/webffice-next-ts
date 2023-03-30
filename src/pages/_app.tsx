@@ -11,9 +11,6 @@ import { useNProgress } from 'hooks/use-nprogress';
 import { createTheme } from 'theme';
 import { createEmotionCache } from 'utils/create-emotion-cache';
 import React, { useEffect } from 'react';
-import { issueToken } from 'service/token-api';
-import { BrowserRouter } from "react-router-dom";
-import { useAppDispatch } from 'hooks/use-auth';
 import 'styles/calendar.scss';
 
 const clientSideEmotionCache = createEmotionCache();
@@ -26,21 +23,7 @@ const App = (props : any) => {
   const getLayout = Component.getLayout ?? ((page : any) => page);
   const theme = createTheme();
 
-  // const dispatch = useAppDispatch();
-  useEffect( ()=>{
-    const getAccessToken = async() => {
-      const response = await issueToken();
-      if (response.data.success && response.data.data) {
-        console.log('response', response);
-        // dispatch(login(response.data.data));
-      }else {
-        console.log('response', response);
-        // dispatch(logout());
-      }
-    };
-    getAccessToken();
-
-  },[]);
+  
 
 
   return (

@@ -11,7 +11,6 @@ import {
   SvgIcon
 } from '@mui/material';
 import { alpha, useTheme } from '@mui/material/styles';
-import { Chart } from 'components/chart';
 
 const useChartOptions = () => {
   const theme = useTheme();
@@ -127,13 +126,6 @@ export const OverviewSales = (props : any) => {
         title="Sales"
       />
       <CardContent>
-        <Chart
-          height={350}
-          options={chartOptions}
-          series={chartSeries}
-          type="bar"
-          width="100%"
-        />
       </CardContent>
       <Divider />
       <CardActions sx={{ justifyContent: 'flex-end' }}>

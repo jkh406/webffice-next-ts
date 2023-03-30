@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useReducer, useRef, Component } from 'react';
 import PropTypes from 'prop-types';
 import ApiService from "service/apiservice"
+import authApi from 'service/auth-api';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -101,7 +102,6 @@ export const AuthProvider = (props : any) => {
     () => {
       initialize();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
 
@@ -127,42 +127,32 @@ export const AuthProvider = (props : any) => {
 
   const signIn = async (_email : any, _password : any) => {
 
-    ApiService.checkUserByEmail(_email)
+    authApi.loginUser(_email, _password)
     .then( res => {
-      if(!res.data.email)
-      {
-        console.log("test", res.data.email);
-        throw new Error('계정이 존재하지 않습니다.');
+      const user = {
+        id: res.data.id,
+        avatar: res.data.avatar,
+        name: res.data.name,
+        email: res.data.email
+      };
+      try {
+        window.sessionStorage.setItem('authenticated', 'true');
+      } catch (err) {
+        console.error(err);
       }
-      else{
-        if (_email !== 'admin@anbtech.co.kr' || _password !== 'admin') {
-          throw new Error('관리자 계정이 아닙니다.');
-        }
-        else{
-          const user = {
-            id: res.data.id,
-            avatar: res.data.avatar,
-            name: res.data.name,
-            email: res.data.email
-          };
-          console.log("test", res.data.email);
-          try {
-            window.sessionStorage.setItem('authenticated', 'true');
-          } catch (err) {
-            console.error(err);
-          }
-      
-          dispatch({
-            type: HANDLERS.SIGN_IN,
-            payload: user
-          });
-        }
-      }
+  
+      dispatch({
+        type: HANDLERS.SIGN_IN,
+        payload: user
+      });
     })
-    .catch(err => {
-      console.log('loadUser() 에러', err);
+    .catch(error => {
+      if (error.response.status === 400) {
+        alert("아이디 혹은 비밀번호를 확인해주세요")
+      }else {
+        alert ("서버에 일시적으로 문제가 생겼습니다. 잠시후 다시 시도해주세요.")
+      }
     });
-
   };
 
   const signUp = async (_email : any, _name : any, _password : any) => {
