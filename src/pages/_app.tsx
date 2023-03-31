@@ -21,6 +21,7 @@ const App = (props : any) => {
   useNProgress();
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page : any) => page);
+  console.log('page', getLayout);
   const theme = createTheme();
 
   return (

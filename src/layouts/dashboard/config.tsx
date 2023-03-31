@@ -10,11 +10,11 @@ import { SvgIcon } from '@mui/material';
 
 export const items = [
   {
-    title: 'Dashboard',
+    title: '일정관리',
     path: '/',
     icon: (
       <SvgIcon fontSize="small">
-        <ShoppingBagIcon />
+        <CalendarMonthIcon />
       </SvgIcon>
     )
   },
@@ -28,11 +28,11 @@ export const items = [
     )
   },
   {
-    title: '일정관리',
+    title: 'test',
     path: '/schedule',
     icon: (
       <SvgIcon fontSize="small">
-        <CalendarMonthIcon />
+        <ShoppingBagIcon />
       </SvgIcon>
     )
   },
