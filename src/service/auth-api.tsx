@@ -13,11 +13,17 @@ class AuthApi {
             withCredentials: true,
         });
     }
-
+    
     loginUser(_email : any, _password : any){
         return axios.post(USER_API_BASE_URL + "/login", {
             userId : _email, userPw : _password
+        }, { 
+            withCredentials: true,
         });
+    }
+    
+    logOutUser(){
+        return axios.post(USER_API_BASE_URL + "/logout");
     }
 
     deleteUser(userID: any){

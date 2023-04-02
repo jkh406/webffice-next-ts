@@ -2,20 +2,21 @@ import { useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
-import { useAuth } from 'hooks/use-auth';
+import { useAppDispatch } from 'hooks/use-auth';
+import { logout } from 'store/slice/auth-slice';
 
 export const AccountPopover = (props : any) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
-  const auth  : any = useAuth();
+  const dispatch = useAppDispatch();
 
   const handleSignOut = useCallback(
     () => {
       onClose?.();
-      auth.signOut();
+      dispatch(logout());
       router.push('/auth/login');
     },
-    [onClose, auth, router]
+    [onClose, router]
   );
 
   return (

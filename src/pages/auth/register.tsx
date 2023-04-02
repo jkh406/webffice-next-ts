@@ -4,12 +4,12 @@ import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Link, Stack, TextField, Typography } from '@mui/material';
-import { useAuth } from 'hooks/use-auth';
-import { Layout as AuthLayout } from 'layouts/auth/layout';
+import { useAppDispatch } from 'hooks/use-auth';
+import { joinUser } from 'store/slice/auth-slice';
 
 const Page = () => {
   const router = useRouter(); 
-  const auth : any = useAuth();
+  const dispatch = useAppDispatch();
   const formik = useFormik({ 
     initialValues: { 
       id: '',
@@ -36,8 +36,10 @@ const Page = () => {
     onSubmit: async (values : any, helpers : any) => { 
       try {
         window.localStorage.setItem("userID", JSON.stringify(values.email))
-        console.log("UserID", window.localStorage.getItem("userID"));
-        await auth.signUp(values.email, values.name, values.password);
+        await dispatch(joinUser({
+          userId: values.email,
+          userPw: values.password
+        }));
         router.push('/');
       } catch (err : any) {
         helpers.setStatus({ success: false });
@@ -157,11 +159,5 @@ const Page = () => {
     </>
   );
 };
-
-Page.getLayout = (page : any) => (
-  <AuthLayout>
-    {page}
-  </AuthLayout>
-);
 
 export default Page;

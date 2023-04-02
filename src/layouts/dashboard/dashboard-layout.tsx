@@ -1,18 +1,17 @@
 import { useCallback, useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import { styled } from '@mui/material/styles';
-import { withAuthGuard } from 'hocs/with-auth-guard';
+import { useAuthGuard } from 'guards/auth-guard';
 import { SideNav } from './side-nav';
 import { TopNav } from './top-nav';
 
-const SIDE_NAV_WIDTH = 280;
 
 const LayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flex: '1 1 auto',
   maxWidth: '100%',
   [theme.breakpoints.up('lg')]: {
-    paddingLeft: SIDE_NAV_WIDTH
+    paddingLeft: 280
   }
 }));
 
@@ -23,7 +22,9 @@ const LayoutContainer = styled('div')({
   width: '100%'
 });
 
-export const Layout = withAuthGuard((props : any) => {
+
+export const DashboardLayout = (props : any) => {
+  const isGuardPassed = useAuthGuard();
   const { children } = props;
   const pathname = usePathname();
   const [openNav, setOpenNav] = useState(false);
@@ -41,9 +42,9 @@ export const Layout = withAuthGuard((props : any) => {
     () => {
       handlePathnameChange();
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [pathname]
   );
+  console.log('isGuardPassed', isGuardPassed);
 
   return (
     <>
@@ -59,4 +60,4 @@ export const Layout = withAuthGuard((props : any) => {
       </LayoutRoot>
     </>
   );
-});
+};

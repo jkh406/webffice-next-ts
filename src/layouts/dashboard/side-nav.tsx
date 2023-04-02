@@ -3,16 +3,7 @@ import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
 import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
 import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
-import {
-  Box,
-  Button,
-  Divider,
-  Drawer,
-  Stack,
-  SvgIcon,
-  Typography,
-  useMediaQuery
-} from '@mui/material';
+import { Box, Button, Divider, Drawer, Stack, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { Logo } from 'components/logo';
 import { Scrollbar } from 'components/scrollbar';
 import { items } from './config';

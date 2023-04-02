@@ -1,18 +1,12 @@
-import { useState } from 'react';
 import Head from 'next/head';
-import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIcon';
-import ArrowUpOnSquareIcon from '@heroicons/react/24/solid/ArrowUpOnSquareIcon';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
-import { Layout as DashboardLayout } from 'layouts/dashboard/layout';
+import { DashboardLayout } from 'layouts/dashboard/dashboard-layout';
 import { CustomSchedule } from 'sections/schedule/schedule-calendar';
 
 const now = new Date();
 
 const Page = () => {
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
-
   return (
     <>
       <Head>

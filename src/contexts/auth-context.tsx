@@ -1,10 +1,6 @@
 import { createContext, useContext, useEffect, useReducer, useRef, Component } from 'react';
 import PropTypes from 'prop-types';
-import ApiService from "service/apiservice"
 import authApi from 'service/auth-api';
-import { login, logout, setToken } from 'store/slice/auth-slice'
-import { useAppDispatch } from 'hooks/use-auth'
-import { useDispatch, useSelector } from 'react-redux';
 
 const HANDLERS = {
   INITIALIZE: 'INITIALIZE',
@@ -21,7 +17,6 @@ const initialState : any = {
 const handlers = {
   [HANDLERS.INITIALIZE]: (state : any, action : any) => {
     const user = action.payload; 
-    console.log('user', user);
     return {
       ...state,
       ...(
@@ -67,7 +62,6 @@ export const AuthProvider = (props : any) => {
   const initialized = useRef(false);
 
   const initialize = async () => {
-    console.log("isAuthenticated", initialized.current);
     if (initialized.current) {
       return;
     }
@@ -155,30 +149,30 @@ export const AuthProvider = (props : any) => {
 
   const signUp = async (_email : any, _name : any, _password : any) => {
 
-    ApiService.checkUserByEmail(_email)
-      .then( res => {
-        if(!res.data.email)
-        {
-          let user = {
-            name: _name,
-            password: _password,
-            email: _email,
-          }
+    // ApiService.checkUserByEmail(_email)
+    //   .then( res => {
+    //     if(!res.data.email)
+    //     {
+    //       let user = {
+    //         name: _name,
+    //         password: _password,
+    //         email: _email,
+    //       }
       
-          ApiService.addUser(user)
-          .then( res => {
-                console.log('성공적으로 등록되었습니다.');
-          })
-          .catch( err => {
-            console.log('saveUser() 에러', err);
-          });
-        }
-      })
-      .catch(err => {
-        console.log('loadUser() 에러', err);
-      });
+    //       ApiService.addUser(user)
+    //       .then( res => {
+    //             console.log('성공적으로 등록되었습니다.');
+    //       })
+    //       .catch( err => {
+    //         console.log('saveUser() 에러', err);
+    //       });
+    //     }
+    //   })
+    //   .catch(err => {
+    //     console.log('loadUser() 에러', err);
+    //   });
 
-      throw new Error('이미 존재하는 계정입니다.');
+    //   throw new Error('이미 존재하는 계정입니다.');
   };
 
   const signOut = () => {

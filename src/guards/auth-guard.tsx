@@ -1,48 +1,39 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import PropTypes from 'prop-types';
-import { useAuthContext } from 'contexts/auth-context';
+import { useSelector } from 'react-redux';
 
-export const AuthGuard = (props : any) => {
-  const { children } = props;
+export const useAuthGuard = () => {
   const router = useRouter();
-  const { isAuthenticated } = useAuthContext();
+  const isAuthenticated = useSelector((state : any) => state.auth.isAuthenticated);
   const ignore = useRef(false);
   const [checked, setChecked] = useState(false);
-  useEffect(
-    () => {
-      if (!router.isReady) {
-        return;
-      }
+  
+  useEffect(() => {
+    if (!router.isReady) {
+      return;
+    }
+    
+    if (ignore.current) {
+      return;
+    }
 
-      if (ignore.current) {
-        return;
-      }
+    // isAuthenticated: user ? true : false
 
-      ignore.current = true;
+    console.log('isAuthenticated = ', isAuthenticated);
+    ignore.current = true;
 
-      if (!isAuthenticated) {
-        console.log('Not authenticated, redirecting', isAuthenticated);
-        router
-          .replace({
-            pathname: '/auth/login',
-            query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
-          })
-          .catch(console.error);
-      } else {
-        setChecked(true);
-      }
-    },
-    [router.isReady]
-  );
+    if (!isAuthenticated) {
+      console.log('Not authenticated, redirecting', isAuthenticated);
+      router
+        .replace({
+          pathname: '/auth/login',
+          query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
+        })
+        .catch(console.error);
+    } else {
+      setChecked(true);
+    }
+  }, [router.isReady, isAuthenticated]);
 
-  if (!checked) {
-    return null;
-  }
-
-  return children;
-};
-
-AuthGuard.propTypes = {
-  children: PropTypes.node 
+  return checked;
 };

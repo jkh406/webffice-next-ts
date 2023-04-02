@@ -6,12 +6,10 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import React, { useState, useEffect } from 'react';
-import scheduleApi from 'service/schedule-api';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { EventInput } from '@fullcalendar/core'
-import { useAuthContext } from 'contexts/auth-context';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectSchedule, insertSchedule, deleteSchedule } from "store/slice/schedule-slice"
+import { useAppDispatch, useAppSelector } from 'hooks/use-auth';
+import { SelectSchedule, InsertSchedule, DeleteSchedule } from "store/slice/schedule-slice"
 import { customAlphabet } from "nanoid";
 
 export interface Eventstate {
@@ -39,45 +37,28 @@ function renderEventContent(eventContent: EventContentArg) {
 }
 
 export function CustomSchedule() {
-  const scheduleslice = useSelector((state : any) => state.schedule)
-  const dispatch = useDispatch();
-
+  const scheduleslice = useAppSelector((state: any) => state.schedule.board);
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(state => state.auth.user);
   const [nanoValue, setNanoValue] = useState({
     code: "",
   });
-
-  const { user } = useAuthContext();
   const [eventValue, setEventValue] : any = useState({
     weekendsVisible: true,
     currentEvents: []
-  })
+  });
 
   useEffect( () => {
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
-     scheduleApi.selectScheduleList(user.email)
-    .then( res => {
-      window.localStorage.setItem("userID", JSON.stringify(user.email))
-      dispatch(selectSchedule(res.data.map((rowData: any ) => ({
-        id: rowData.board_id,
-        title: rowData.board_title,
-        start: rowData.start_date
-      }
-      ))));
-
-    })
-    .catch(err => {
-      console.log('selectBoardList() Error', err);
-    });
+    if (user) {
+      dispatch(SelectSchedule((user.user_ID)));
+    }
   },[]);
 
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
-      console.log('clickInfo =', clickInfo);
-      console.log('clickInfo =', clickInfo.event._def.publicId);
       
-      dispatch(deleteSchedule({
-        publicId : clickInfo.event._def.publicId
-      }));
+      dispatch(DeleteSchedule(clickInfo.event._def.publicId));
 
       clickInfo.event.remove();
     }
@@ -86,17 +67,18 @@ export function CustomSchedule() {
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     let title : any = prompt('이벤트의 새 제목을 입력하세요.')
     let calendarApi = selectInfo.view.calendar
+    console.log('selectInfo', selectInfo);
     
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
-    calendarApi.unselect() // clear date selection
+    calendarApi.unselect()
 
-    dispatch(insertSchedule({
+    dispatch(InsertSchedule({
       board_id: nanoValue.code,
       board_title : title,
-      start_date: selectInfo.startStr,
-      end_date: selectInfo.endStr,
-      chk_allDay: selectInfo.allDay.toString(),
-      register_id : user.email
+      board_start: selectInfo.startStr,
+      board_end: selectInfo.endStr,
+      chkallDay: selectInfo.allDay.toString(),
+      register_id : user.user_ID
     }));
 
     if (title) {
@@ -137,7 +119,7 @@ export function CustomSchedule() {
               selectMirror={true}
               dayMaxEvents={true}
               select={handleDateSelect}
-              events={scheduleslice.board}
+              events={scheduleslice}
               eventContent={renderEventContent} 
               eventsSet={handleEvents} 
               eventClick={handleEventClick}
@@ -146,8 +128,6 @@ export function CustomSchedule() {
           </Stack>
         </Paper>
       </Container>
-      
-      
     </LocalizationProvider>
   );
 }

@@ -6,23 +6,18 @@ import { CssBaseline } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { Provider } from "react-redux";
 import { store } from "store/configureStore"
-import { AuthConsumer, AuthProvider } from 'contexts/auth-context';
-import { useNProgress } from 'hooks/use-nprogress';
 import { createTheme } from 'theme';
 import { createEmotionCache } from 'utils/create-emotion-cache';
 import React, { useEffect } from 'react';
 import 'styles/calendar.scss';
 
 const clientSideEmotionCache = createEmotionCache();
-const SplashScreen  = () : null => null;
-
 const App = (props : any) => {
 
-  useNProgress();
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page : any) => page);
-  console.log('page', getLayout);
   const theme = createTheme();
+
 
   return (
     <CacheProvider value={emotionCache}>
@@ -37,18 +32,10 @@ const App = (props : any) => {
       </Head>
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <Provider store={store}>
-          <AuthProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline /> 
-                <AuthConsumer>
-                  {
-                    (auth : any) => auth.isLoading
-                      ? <SplashScreen />
-                      : getLayout(<Component {...pageProps} />) 
-                  }
-                </AuthConsumer> 
+                { getLayout(<Component {...pageProps} />) }
             </ThemeProvider>
-          </AuthProvider>
         </Provider>
       </LocalizationProvider>
     </CacheProvider>

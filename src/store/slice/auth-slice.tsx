@@ -1,35 +1,30 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-// import { createUser, signIn } from "../api/Api";
-// import { useAppDispatch } from "./hooks";
-// import {API} from '../api/Api';
-import axios from "axios";
 import AuthApi from "service/auth-api";
-
-type AuthState = {
-    loading: boolean;
-    logged: boolean;
-    token: string;
-    myId: string;
-}
 
 type UserType = {
     userId: string;
     userPw: string;
 };
 
-const initialAuthState: AuthState = {
-    loading: false,
-    logged: false,
+const initialState: any = {
+    isLoading: false,
+    isAuthenticated: false,
     token: '',
-    myId: '',
+    user: null,
 }
 
 // 로그인
-export const loginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {rejectWithValue, getState, dispatch}) => {
+export const loginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {getState, dispatch}) => {
     try {
         const response = await AuthApi.loginUser(user.userId, user.userPw);
         console.log("response data = ", response);
-        dispatch(login(response.data.data));
+        dispatch({
+            type: 'login',
+            payload: {
+              token: response.data.data.Token,
+              user: response.data.data.User,
+            },
+          });
         return response.data;
     }catch (error: any) {
         console.log(error);
@@ -41,8 +36,9 @@ export const loginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
         return error?.response;
     }
 });
+
 // 회원가입
-export const join = createAsyncThunk("JOIN_USER", async (user: UserType, {rejectWithValue, getState, dispatch}) => {
+export const joinUser = createAsyncThunk("JOIN_USER", async (user: UserType, {getState, dispatch}) => {
 
     try {
         const response = await AuthApi.addUser(user.userId, user.userPw);
@@ -53,64 +49,83 @@ export const join = createAsyncThunk("JOIN_USER", async (user: UserType, {reject
         return error?.response;
     }
 });
+
 // 로그아웃
 export const logoutUser = createAsyncThunk("LOGOUT_USER", async (_,{dispatch}) => {
 
-    // try {
-    //     const response = await axios.post(`${url}/logout`, {},{ 
-    //         withCredentials: true,
-    //     });
-    //     if (response.status === 200 && response.data.success) {
-    //         dispatch(logout());
-    //     }else {
-            
-    //     }
-    //     return response.data;
-    // }catch (error: any) {
-    //     return error?.response;
-    // }
+    try {
+        const response = await AuthApi.logOutUser();
+        if (response.status === 200 && response.data.success) {
+            dispatch(logout());
+        }
+        return response.data;
+    }catch (error: any) {
+        return error?.response;
+    }
+});
+
+// 
+export const skip = createAsyncThunk("skip", async (_,{dispatch}) => {
+      dispatch(skip());
 });
 
 const authSlice = createSlice({
     name: 'contents',
-    initialState: initialAuthState,
+    initialState: initialState,
     reducers: {
-        login: (state: AuthState, action: PayloadAction<string>) => ({
+        login: (state :any, action : any) => {
+            state.token = action.payload.data.Token;
+            state.user = action.payload.data.User;
+            state.isAuthenticated = true;
+        },
+        join: (state: any,) => ({
             ...state,
-            logged: true,
-            token: action.payload,
         }),
-        logout: (state: AuthState,) => ({
+        logout: (state: any,) => ({
             ...state,
-            ...initialAuthState,
+            ...initialState,
         }),
-        setToken: (state: AuthState, action: PayloadAction<string>) => ({
+        setToken: (state: any, action: any) => ({
             ...state,
             token: action.payload
-        })
+        }),
+        skip(state, action) {
+            state.isLoading = false;
+            state.isAuthenticated = true;
+            state.token = 'testtoken';
+            state.user = {
+                id: 'SkipID',
+                avatar: '/assets/avatars/avatar-anika-visser.png',
+                name: 'SKIP',
+                email: 'SKIP@anbtech.co.kr'};
+        }
     },
     extraReducers: (builder) => {
-        // Handling peding state
         builder.addCase(loginUser.pending, (state, action) => {
-            state.loading = true;
+            state.isLoading = true;
         });
         builder.addCase(loginUser.fulfilled, (state, action) => {
-            state.loading = false;
+            state.isLoading = false;
+            state.isAuthenticated = true;
             state.myId = action.payload.message;
+            state.token = action.payload.data.Token;
+            state.user = action.payload.data.User;
         });
-        builder.addCase(join.fulfilled, (state, action) => {
-            state.loading = false;
-            state.myId = action.payload.message;
-        });
-
         builder.addCase(logoutUser.pending, (state, action) => {
-            state.loading = true;
+            state.isLoading = true;
         });
         builder.addCase(logoutUser.fulfilled, (state, action) => {
-            state.loading = false;
+            state.isLoading = false;
+        });
+        builder.addCase(joinUser.fulfilled, (state, action) => {
+            state.isLoading = false;
+            state.myId = action.payload.message;
+        });
+        builder.addCase(skip.fulfilled, (state, action) => {
+            state.isLoading = false;
         });
     }
 });
 
-export const {login, logout, setToken} = authSlice.actions;
+export const { login, logout, setToken, join } = authSlice.actions;
 export default authSlice.reducer;

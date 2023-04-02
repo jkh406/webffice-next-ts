@@ -3,16 +3,7 @@ import BellIcon from '@heroicons/react/24/solid/BellIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import Bars3Icon from '@heroicons/react/24/solid/Bars3Icon';
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
-import {
-  Avatar,
-  Badge,
-  Box,
-  IconButton,
-  Stack,
-  SvgIcon,
-  Tooltip,
-  useMediaQuery
-} from '@mui/material';
+import { Avatar, Badge, Box, IconButton, Stack, SvgIcon, Tooltip, useMediaQuery } from '@mui/material';
 import { alpha } from '@mui/material/styles';
 import { usePopover } from 'hooks/use-popover';
 import { AccountPopover } from './account-popover';
