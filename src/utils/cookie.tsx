@@ -1,11 +1,22 @@
-import { Cookies } from "react-cookie";
+import { useCookies  } from "react-cookie";
 
-const cookies = new Cookies()
+export const useCookie = () => {
+  const expires = new Date();
+  expires.setMinutes(expires.getMinutes() + 1);
 
-export const setCookie = (name: string, value: string, option?: any) => {
-  return cookies.set(name, value, { ...option })
-}
+  const [cookies, setCookie, removeCookie] = useCookies(["auth"]);
 
-export const getCookie = (name: string) => {
-  return cookies.get(name)
-}
+  const setAuthCookie = (token : any) => {
+    setCookie("auth", token, { path: "/", expires });
+  };
+
+  const removeAuthCookie = () => {
+    removeCookie("auth");
+  };
+
+  return {
+    auth: cookies.auth,
+    setAuthCookie,
+    removeAuthCookie,
+  };
+};

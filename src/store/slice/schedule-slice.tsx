@@ -1,5 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { deleteScheduleList, insertScheduleList, selectScheduleList } from 'service/schedule-api';
+import { useAppSelector } from 'hooks/use-auth';
 
 type scheduleType =  { 
   board_id : string,
@@ -7,35 +8,37 @@ type scheduleType =  {
   board_start: string,
   board_end: string,
   chkallDay: string,
-  register_id : string,
+  register_id : string
 }
 
-const initialState : any = [
+const initialState : any = 
   {
     board_id: '',
     board_title: '',
     board_start: '',
     board_end: '',
-    chkallDay: false,
-    board : null
+    chkallDay: '',
+    register_id : '',
+    board: []
   }
-]
+
 
 // SELECT
-export const SelectSchedule = createAsyncThunk("SELECT_SCHEDULE", async (schedule_ID: any, {dispatch}) => {
+export const SelectSchedule = createAsyncThunk("SELECT_SCHEDULE", async (schedule: any, {dispatch, getState}) => {
   try {
-      const response = await selectScheduleList(schedule_ID);
+    console.log('schedule.token', schedule.token);
+      const response = await selectScheduleList(schedule.user_ID, schedule.token);
       const payload = response.data.map((rowData: any ) => ({
-        board_id: rowData.board_id,
-        board_title: rowData.board_title,
-        board_start: rowData.start_date
+        id: rowData.board_id,
+        title: rowData.board_title,
+        start: rowData.start_date
       }));
 
       dispatch({
           type: 'selectItem',
           payload
         });
-      return response.data;
+      return payload;
   }catch (error: any) {
       return error?.response;
   }
@@ -44,7 +47,9 @@ export const SelectSchedule = createAsyncThunk("SELECT_SCHEDULE", async (schedul
 // INSERT
 export const InsertSchedule = createAsyncThunk("INSERT_SCHEDULE", async (schedule: scheduleType, {dispatch}) => {
   try {
-    const response = await insertScheduleList(schedule);
+    const token = useAppSelector((state : any) => state.auth.token);
+    console.log('InsertSchedule token', token);
+    const response = await insertScheduleList(schedule, token);
     console.log('InsertSchedule response', response);
 
     dispatch({
@@ -63,7 +68,8 @@ export const InsertSchedule = createAsyncThunk("INSERT_SCHEDULE", async (schedul
 // DELETE
 export const DeleteSchedule = createAsyncThunk("DELETE_SCHEDULE", async (schedule_ID: string,{dispatch}) => {
   try {
-    const response = await deleteScheduleList(schedule_ID);
+    const token = useAppSelector((state : any) => state.auth.token);
+    const response = await deleteScheduleList(schedule_ID, token);
     dispatch({
         type: 'deleteItem',
         payload: {
@@ -81,10 +87,9 @@ export const scheduleSlice = createSlice({
     name: 'schedule',
     initialState,
     reducers: {
-        selectItem: (state : any, action : any) => ({
-          ...state,
-          board: action.payload
-        }),
+        selectItem: (state : any, action : any) => {
+          state.board = action.payload
+        },
         insertItem: (state : any, action : any) => ({
           ...state
         }),
@@ -93,10 +98,11 @@ export const scheduleSlice = createSlice({
         })
     },
     extraReducers: (builder) => {
-        builder.addCase(SelectSchedule.fulfilled, (state, action) => ({
-          board : action.payload
-        }));
+        builder.addCase(SelectSchedule.fulfilled, (state : any, action) => {
+          state.board = action.payload
+        });
         builder.addCase(InsertSchedule.fulfilled, (state, action) => {
+          state.board = action.payload
         });
         builder.addCase(DeleteSchedule.fulfilled, (state, action) => {
         });

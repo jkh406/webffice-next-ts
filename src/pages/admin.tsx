@@ -2,7 +2,6 @@ import Head from 'next/head';
 import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { DashboardLayout } from 'layouts/dashboard-layout';
-import { CustomSchedule } from 'sections/schedule/schedule-calendar';
 
 const now = new Date();
 
@@ -11,7 +10,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Schedules | A&B Technology
+          Admin | A&B Technology
         </title>
       </Head>
       <Box
@@ -30,7 +29,7 @@ const Page = () => {
             >
               <Stack spacing={1}>
                 <Typography variant="h4">
-                    일정관리
+                    관리자 설정
                 </Typography>
                 <Stack
                   alignItems="center"
@@ -39,18 +38,6 @@ const Page = () => {
                 >
                 </Stack>
               </Stack>
-              <div>
-                <Button
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Add
-                </Button>
-              </div>
             </Stack>
           </Stack>
         </Container>

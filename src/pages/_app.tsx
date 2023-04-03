@@ -17,7 +17,7 @@ const App = (props : any) => {
   const { Component, emotionCache = clientSideEmotionCache, pageProps } = props;
   const getLayout = Component.getLayout ?? ((page : any) => page);
   const theme = createTheme();
-
+  
 
   return (
     <CacheProvider value={emotionCache}>

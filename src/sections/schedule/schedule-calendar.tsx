@@ -6,11 +6,12 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import interactionPlugin from '@fullcalendar/interaction';
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { EventInput } from '@fullcalendar/core'
 import { useAppDispatch, useAppSelector } from 'hooks/use-auth';
 import { SelectSchedule, InsertSchedule, DeleteSchedule } from "store/slice/schedule-slice"
 import { customAlphabet } from "nanoid";
+import { FC } from 'react';
 
 export interface Eventstate {
   weekendsVisible: boolean | undefined;
@@ -36,10 +37,14 @@ function renderEventContent(eventContent: EventContentArg) {
   )
 }
 
-export function CustomSchedule() {
-  const scheduleslice = useAppSelector((state: any) => state.schedule.board);
+interface CustomScheduleProps {
+  scheduleslice: any;
+}
+
+export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
+  
   const dispatch = useAppDispatch();
-  const user = useAppSelector(state => state.auth.user);
+  const user = useAppSelector(state => state.auth);
   const [nanoValue, setNanoValue] = useState({
     code: "",
   });
@@ -50,9 +55,7 @@ export function CustomSchedule() {
 
   useEffect( () => {
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
-    if (user) {
-      dispatch(SelectSchedule((user.user_ID)));
-    }
+
   },[]);
 
   const handleEventClick = (clickInfo: EventClickArg) => {

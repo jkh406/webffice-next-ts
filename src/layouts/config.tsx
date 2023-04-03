@@ -6,6 +6,7 @@ import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
 import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { SvgIcon } from '@mui/material';
 
 export const items = [
@@ -73,11 +74,11 @@ export const items = [
     )
   },
   {
-    title: 'Error Page',
-    path: '/404',
+    title: '관리자 설정',
+    path: '/admin',
     icon: (
       <SvgIcon fontSize="small">
-        <XCircleIcon />
+        <AdminPanelSettingsIcon />
       </SvgIcon>
     )
   }

@@ -1,7 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import scheduleSlice from "./slice/schedule-slice";
 import authSlice from "./slice/auth-slice";
-import { persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
 const persistConfig = {
@@ -24,6 +23,7 @@ export const store = configureStore({
     }),
     devTools: true
 })
+
 
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

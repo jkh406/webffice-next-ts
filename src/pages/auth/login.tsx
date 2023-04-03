@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Head from 'next/head';
 import NextLink from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -6,9 +6,13 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Alert, Box, Button, FormHelperText, Link, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'hooks/use-auth';
-import { loginUser, skip } from 'store/slice/auth-slice';
+import { LoginUser, Skip, login, logout } from 'store/slice/auth-slice';
+import { issueTokenApi } from 'service/auth-api';
+import { useCookie } from 'utils/cookie';
+
 
 const Page = () => {
+  const { auth, setAuthCookie } = useCookie();
   const router = useRouter();
   const dispatch = useAppDispatch();
   const [method, setMethod] = useState('email');
@@ -31,7 +35,7 @@ const Page = () => {
     }),
     onSubmit: async (values, helpers) => {
       try {
-        await dispatch(loginUser({
+        await dispatch(LoginUser({
           userId: values.email,
           userPw: values.password
         }));
@@ -43,6 +47,7 @@ const Page = () => {
       }
     }
   });
+  
 
   const handleMethodChange = useCallback(
     (event : any, value : any) => {
@@ -53,7 +58,7 @@ const Page = () => {
 
   const handleSkip = useCallback(
     () => {
-      dispatch(skip);
+      dispatch(Skip);
       router.push('/');
     },
     [router]

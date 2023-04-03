@@ -2,7 +2,7 @@ import Head from 'next/head';
 import { Box, Container, Stack, Typography } from '@mui/material';
 import { SettingsNotifications } from 'sections/settings/settings-notifications';
 import { SettingsPassword } from 'sections/settings/settings-password';
-import { Layout as DashboardLayout } from 'layouts/dashboard/dashboard-layout';
+import { DashboardLayout } from 'layouts/dashboard-layout';
 
 const Page = () => (
   <>

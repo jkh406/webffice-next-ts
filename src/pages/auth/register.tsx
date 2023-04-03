@@ -35,7 +35,6 @@ const Page = () => {
     }),
     onSubmit: async (values : any, helpers : any) => { 
       try {
-        window.localStorage.setItem("userID", JSON.stringify(values.email))
         await dispatch(joinUser({
           userId: values.email,
           userPw: values.password
