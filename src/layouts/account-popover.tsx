@@ -3,17 +3,20 @@ import { useRouter } from 'next/navigation';
 import PropTypes from 'prop-types';
 import { Box, Divider, MenuItem, MenuList, Popover, Typography } from '@mui/material';
 import { useAppDispatch } from 'hooks/use-auth';
-import { logout } from 'store/slice/auth-slice';
+import { LogoutUser } from 'store/slice/auth-slice';
+import { useCookie } from 'utils/cookie';
 
 export const AccountPopover = (props : any) => {
   const { anchorEl, onClose, open } = props;
   const router = useRouter();
   const dispatch = useAppDispatch();
+  const { removeAuthCookie } = useCookie();
 
   const handleSignOut = useCallback(
     () => {
       onClose?.();
-      dispatch(logout());
+      dispatch(LogoutUser());
+      removeAuthCookie();
       router.push('/auth/login');
     },
     [onClose, router]

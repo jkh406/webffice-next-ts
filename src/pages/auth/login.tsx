@@ -7,7 +7,6 @@ import * as Yup from 'yup';
 import { Alert, Box, Button, FormHelperText, Link, Stack, Tab, Tabs, TextField, Typography } from '@mui/material';
 import { useAppDispatch } from 'hooks/use-auth';
 import { LoginUser, Skip, login, logout } from 'store/slice/auth-slice';
-import { issueTokenApi } from 'service/auth-api';
 import { useCookie } from 'utils/cookie';
 
 
@@ -18,12 +17,12 @@ const Page = () => {
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      email: 'admin@anbtech.co.kr',
+      userId: 'admin@anbtech.co.kr',
       password: 'admin',
       submit: null
     },
     validationSchema: Yup.object({
-      email: Yup
+      userId: Yup
         .string()
         .email('Must be a valid email')
         .max(255)
@@ -36,7 +35,7 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
       try {
         await dispatch(LoginUser({
-          userId: values.email,
+          userId: values.userId,
           userPw: values.password
         }));
         router.push('/');
@@ -133,15 +132,15 @@ const Page = () => {
               >
                 <Stack spacing={3}>
                   <TextField
-                    error={!!(formik.touched.email && formik.errors.email)}
+                    error={!!(formik.touched.userId && formik.errors.userId)}
                     fullWidth
-                    helperText={formik.touched.email && formik.errors.email}
+                    helperText={formik.touched.userId && formik.errors.userId}
                     label="Email Address"
-                    name="email"
+                    name="userId"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     type="email"
-                    value={formik.values.email}
+                    value={formik.values.userId}
                   />
                   <TextField
                     error={!!(formik.touched.password && formik.errors.password)}

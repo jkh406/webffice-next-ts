@@ -17,7 +17,9 @@ export const loginUserApi = (_email : any, _password : any) => {
 }
 
 export const logOutUserApi = () => {
-    return axios.post(USER_API_BASE_URL + "/logout");
+    return axios.post(USER_API_BASE_URL + "/logout", null, { 
+        withCredentials: true,
+    });
 }
 
 export const deleteUserApi = (userID: any) =>{

@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { useCookies } from 'react-cookie';
+import { useCookie } from 'utils/cookie';
 
 export const useAuthGuard = () => {
   const router = useRouter();
   const ignore = useRef(false);
   const [checked, setChecked] = useState(false);
-  const [cookies, setCookie, removeCookie] = useCookies(['auth']);
+  const { auth } = useCookie();
   let isAuthenticated = useSelector((state : any) => state.auth.isAuthenticated);
   
   useEffect(() => {
@@ -16,8 +16,8 @@ export const useAuthGuard = () => {
     }
     ignore.current = true;
 
-    console.log('cookies exist?', cookies.auth);
-    if(cookies.auth)
+    console.log('cookies exist?', auth);
+    if(auth)
     {
       isAuthenticated = true;
     } else {

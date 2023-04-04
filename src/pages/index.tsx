@@ -7,29 +7,24 @@ import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from 'hooks/use-auth';
 import { SelectSchedule } from "store/slice/schedule-slice"
 import { customAlphabet } from "nanoid";
-import { useCookies } from 'react-cookie';
+import { useCookie } from 'utils/cookie';
 
 const now = new Date();
 
 const Page = () => {
   const scheduleslice = useAppSelector((state : any) => state.schedule.board);
   const user = useAppSelector(state => state.auth);
-  const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz-", 10);
   const dispatch = useAppDispatch();
-  const [cookies, setCookie, removeCookie] = useCookies(['auth']);
-  const [nanoValue, setNanoValue] = useState({
-    code: "",
-  });
+  const { auth, setAuthCookie } = useCookie();
 
   useEffect( () => {
-    setNanoValue((prev) => ({ ...prev, code: nanoid() }));
-
     if (user) {
-      console.log('cookies', cookies.auth);
-      const schedule = { user_ID: localStorage.getItem('user_ID'), token: cookies.auth };
+      console.log('user', user);
+      setAuthCookie(user.token);
+      const schedule = { user_ID: localStorage.getItem('user_ID'), token: auth };
       dispatch(SelectSchedule((schedule)));
     }
-  },[]);
+  },[dispatch]);
   
   return (
   <>

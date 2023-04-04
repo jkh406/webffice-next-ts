@@ -5,7 +5,6 @@ import { useAuthGuard } from 'guards/auth-guard';
 import { SideNav } from './side-nav';
 import { TopNav } from './top-nav';
 
-
 const LayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
   flex: '1 1 auto',
@@ -24,6 +23,7 @@ const LayoutContainer = styled('div')({
 
 
 export const DashboardLayout = (props : any) => {
+
   const isGuardPassed = useAuthGuard();
   const { children } = props;
   const pathname = usePathname();

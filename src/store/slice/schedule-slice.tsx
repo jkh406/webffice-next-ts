@@ -13,13 +13,13 @@ type scheduleType =  {
 
 const initialState : any = 
   {
-    board_id: '',
-    board_title: '',
-    board_start: '',
-    board_end: '',
-    chkallDay: '',
-    register_id : '',
-    board: []
+    board_id: null,
+    board_title: null,
+    board_start: null,
+    board_end: null,
+    chkallDay: null,
+    register_id : null,
+    board: null
   }
 
 

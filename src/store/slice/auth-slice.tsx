@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addUserApi, loginUserApi, logOutUserApi } from "service/auth-api";
-import { useCookie } from "utils/cookie";
 
 type UserType = {
     userId: string;
@@ -17,7 +16,6 @@ const initialState: any = {
 // 로그인
 export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {getState, dispatch}) => {
     try {
-        const { auth, setAuthCookie } = useCookie();
         const response = await loginUserApi(user.userId, user.userPw);
         dispatch({
             type: 'login',
@@ -26,7 +24,6 @@ export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
               user: response.data.data.User,
             },
           });
-        setAuthCookie(response.data.data);
         return response.data;
     }catch (error: any) {
         console.log(error);
@@ -41,7 +38,6 @@ export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
 
 // 회원가입
 export const joinUser = createAsyncThunk("JOIN_USER", async (user: UserType, {getState, dispatch}) => {
-
     try {
         const response = await addUserApi(user.userId, user.userPw);
         dispatch(login(response.data.data));
@@ -54,7 +50,6 @@ export const joinUser = createAsyncThunk("JOIN_USER", async (user: UserType, {ge
 
 // 로그아웃
 export const LogoutUser = createAsyncThunk("LOGOUT_USER", async (_,{dispatch}) => {
-
     try {
         const response = await logOutUserApi();
         if (response.status === 200 && response.data.success) {
@@ -113,6 +108,10 @@ const authSlice = createSlice({
             state.token = action.payload.data.Token;
             state.user = action.payload.data.User;
             window.localStorage.setItem("user_ID", action.payload.message);
+        });
+        builder.addCase(LoginUser.rejected, (state, action) => {
+            state.isLoading = false;
+            state.isAuthenticated = true;
         });
         builder.addCase(LogoutUser.pending, (state, action) => {
             state.isLoading = true;
