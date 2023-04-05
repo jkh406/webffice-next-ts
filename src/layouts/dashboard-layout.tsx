@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import { useAuthGuard } from 'guards/auth-guard';
 import { SideNav } from './side-nav';
 import { TopNav } from './top-nav';
+import { useRouter } from 'next/router';
 
 const LayoutRoot = styled('div')(({ theme }) => ({
   display: 'flex',
@@ -23,7 +24,7 @@ const LayoutContainer = styled('div')({
 
 
 export const DashboardLayout = (props : any) => {
-
+  const router = useRouter();
   const isGuardPassed = useAuthGuard();
   const { children } = props;
   const pathname = usePathname();
@@ -41,8 +42,19 @@ export const DashboardLayout = (props : any) => {
   useEffect(
     () => {
       handlePathnameChange();
+      if(!isGuardPassed)
+      {
+        router
+        .replace({
+          pathname: '/auth/login',
+          query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
+        })
+        .catch(console.error);
+      } else {
+        router.push("/");
+      }
     },
-    [pathname]
+    [pathname, isGuardPassed]
   );
   console.log('isGuardPassed', isGuardPassed);
 

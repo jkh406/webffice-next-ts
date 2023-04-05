@@ -5,6 +5,7 @@ const USER_API_BASE_URL = "http://localhost:8080/api/schedule";
 
 export const selectScheduleList = (schedule_ID: any, token : any) => 
 {
+  console.log('scheduel api start token', token);
   return axios.get(USER_API_BASE_URL + '/' + schedule_ID, {
     withCredentials: true,       
    headers: {
