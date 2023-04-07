@@ -9,6 +9,7 @@ import interactionPlugin from '@fullcalendar/interaction';
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { EventInput } from '@fullcalendar/core'
 import { useAppDispatch, useAppSelector } from 'hooks/use-auth';
+import { useCookie } from 'utils/cookie';
 import { SelectSchedule, InsertSchedule, DeleteSchedule } from "store/slice/schedule-slice"
 import { customAlphabet } from "nanoid";
 import { FC } from 'react';
@@ -45,6 +46,7 @@ export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
   
   const dispatch = useAppDispatch();
   const user = useAppSelector(state => state.auth);
+  const { auth } = useCookie();
   const [nanoValue, setNanoValue] = useState({
     code: "",
   });
@@ -61,7 +63,11 @@ export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
   const handleEventClick = (clickInfo: EventClickArg) => {
     if (confirm(`이벤트를 삭제하시겠습니까? '${clickInfo.event.title}'`)) {
       
-      dispatch(DeleteSchedule(clickInfo.event._def.publicId));
+    const schedule = { 
+      schedule_id: clickInfo.event._def.publicId,
+      token: auth
+    };
+      dispatch(DeleteSchedule(schedule));
 
       clickInfo.event.remove();
     }
@@ -70,19 +76,22 @@ export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
   const handleDateSelect = (selectInfo: DateSelectArg) => {
     let title : any = prompt('이벤트의 새 제목을 입력하세요.')
     let calendarApi = selectInfo.view.calendar
-    console.log('selectInfo', selectInfo);
-    
+    const storageUser = JSON.parse(localStorage.getItem('user') || '{}');
+    console.log('user test', user);
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
     calendarApi.unselect()
 
-    dispatch(InsertSchedule({
+    const schedule = { 
       board_id: nanoValue.code,
       board_title : title,
-      board_start: selectInfo.startStr,
-      board_end: selectInfo.endStr,
+      start_date: selectInfo.startStr,
+      end_date: selectInfo.endStr,
       chkallDay: selectInfo.allDay.toString(),
-      register_id : user.user_ID
-    }));
+      register_id : storageUser.user_ID,
+      token: auth
+    };
+
+    dispatch(InsertSchedule(schedule));
 
     if (title) {
       calendarApi.addEvent({
@@ -93,6 +102,9 @@ export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
         allDay: selectInfo.allDay
       })
     }
+    
+    const selectSchedule = { user_ID: storageUser.user_ID, token: auth };
+    dispatch(SelectSchedule((selectSchedule)));
   }
 
   const handleEvents = (events: EventApi[]) => {

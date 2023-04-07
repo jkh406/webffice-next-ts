@@ -17,12 +17,12 @@ const Page = () => {
   const [method, setMethod] = useState('email');
   const formik = useFormik({
     initialValues: {
-      userId: 'admin@anbtech.co.kr',
+      user_Id: 'admin@anbtech.co.kr',
       password: 'admin',
       submit: null
     },
     validationSchema: Yup.object({
-      userId: Yup
+      user_Id: Yup
         .string()
         .email('Must be a valid email')
         .max(255)
@@ -35,8 +35,8 @@ const Page = () => {
     onSubmit: async (values, helpers) => {
       try {
         await dispatch(LoginUser({
-          userId: values.userId,
-          userPw: values.password
+          user_Id: values.user_Id,
+          user_Pw: values.password
         }));
         router.push('/');
       } catch (err : any) {
@@ -132,15 +132,15 @@ const Page = () => {
               >
                 <Stack spacing={3}>
                   <TextField
-                    error={!!(formik.touched.userId && formik.errors.userId)}
+                    error={!!(formik.touched.user_Id && formik.errors.user_Id)}
                     fullWidth
-                    helperText={formik.touched.userId && formik.errors.userId}
+                    helperText={formik.touched.user_Id && formik.errors.user_Id}
                     label="Email Address"
-                    name="userId"
+                    name="user_Id"
                     onBlur={formik.handleBlur}
                     onChange={formik.handleChange}
                     type="email"
-                    value={formik.values.userId}
+                    value={formik.values.user_Id}
                   />
                   <TextField
                     error={!!(formik.touched.password && formik.errors.password)}

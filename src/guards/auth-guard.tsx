@@ -1,33 +1,27 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
 import { useCookie } from 'utils/cookie';
 import { useAppSelector } from 'hooks/use-auth';
 
 export const useAuthGuard = () => {
   const router = useRouter();
-  const ignore = useRef(false);
-  const [checked, setChecked] = useState(false);
+  const [checked, setChecked] = useState(true);
   const { auth } = useCookie();
   const user = useAppSelector(state => state.auth);
-  let isAuthenticated = useSelector((state : any) => state.auth.isAuthenticated);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
   
   useEffect(() => {
-    if (!router.isReady || ignore.current) {
+    if (!router.isReady ) {
       return;
     }
-    ignore.current = true;
 
-    console.log('cookies exist?', auth);
-    if(auth)
-    {
-      isAuthenticated = true;
+    if (auth) {
+      setIsAuthenticated(true);
     } else {
-      isAuthenticated = false;
+      setIsAuthenticated(false);
     }
-    console.log('isAuthenticated = ', isAuthenticated);
 
-    if (!isAuthenticated && !user) {
+    if (!isAuthenticated && !user.user) {
       console.log('Not authenticated, redirecting', isAuthenticated);
       setChecked(false);
     } else {

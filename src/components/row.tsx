@@ -58,7 +58,6 @@ const Row = ({
 }: RowProps) => {
 
     const handleClick = () => {
-        // console.log("눌렀어!", item);
     }
     return (
         <RowBlock onClick={handleClick}>

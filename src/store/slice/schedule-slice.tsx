@@ -5,18 +5,19 @@ import { useAppSelector } from 'hooks/use-auth';
 type scheduleType =  { 
   board_id : string,
   board_title: string,
-  board_start: string,
-  board_end: string,
+  start_date: string,
+  end_date: string,
   chkallDay: string,
-  register_id : string
+  register_id : string,
+  token : string
 }
 
 const initialState : any = 
   {
     board_id: null,
     board_title: null,
-    board_start: null,
-    board_end: null,
+    start_date: null,
+    end_date: null,
     chkallDay: null,
     register_id : null,
     board: null
@@ -26,7 +27,6 @@ const initialState : any =
 // SELECT
 export const SelectSchedule = createAsyncThunk("SELECT_SCHEDULE", async (schedule: any, {dispatch, getState}) => {
   try {
-    console.log('schedule.token', schedule.token);
       const response = await selectScheduleList(schedule.user_ID, schedule.token);
       const payload = response.data.map((rowData: any ) => ({
         id: rowData.board_id,
@@ -47,18 +47,8 @@ export const SelectSchedule = createAsyncThunk("SELECT_SCHEDULE", async (schedul
 // INSERT
 export const InsertSchedule = createAsyncThunk("INSERT_SCHEDULE", async (schedule: scheduleType, {dispatch}) => {
   try {
-    const token = useAppSelector((state : any) => state.auth.token);
-    console.log('InsertSchedule token', token);
-    const response = await insertScheduleList(schedule, token);
-    console.log('InsertSchedule response', response);
+    const response = await insertScheduleList(schedule, schedule.token);
 
-    dispatch({
-        type: 'insertItem',
-        payload: {
-          token: response,
-          user: response,
-        },
-      });
       return response;
   }catch (error: any) {
       return error?.response;
@@ -66,18 +56,10 @@ export const InsertSchedule = createAsyncThunk("INSERT_SCHEDULE", async (schedul
 });
 
 // DELETE
-export const DeleteSchedule = createAsyncThunk("DELETE_SCHEDULE", async (schedule_ID: string,{dispatch}) => {
+export const DeleteSchedule = createAsyncThunk("DELETE_SCHEDULE", async (schedule: any,{dispatch}) => {
   try {
-    const token = useAppSelector((state : any) => state.auth.token);
-    const response = await deleteScheduleList(schedule_ID, token);
-    dispatch({
-        type: 'deleteItem',
-        payload: {
-          token: response,
-          user: response,
-        },
-      });
-      return response;
+    const response = await deleteScheduleList(schedule.schedule_id, schedule.token);
+    return response;
   }catch (error: any) {
       return error?.response;
   }

@@ -1,18 +1,19 @@
 import NextLink from 'next/link';
 import { usePathname } from 'next/navigation';
 import PropTypes from 'prop-types';
-import ArrowTopRightOnSquareIcon from '@heroicons/react/24/solid/ArrowTopRightOnSquareIcon';
 import ChevronUpDownIcon from '@heroicons/react/24/solid/ChevronUpDownIcon';
-import { Box, Button, Divider, Drawer, Stack, SvgIcon, Typography, useMediaQuery } from '@mui/material';
+import { Box, Divider, Drawer, Stack, SvgIcon, Typography, useMediaQuery } from '@mui/material';
 import { Logo } from 'components/logo';
 import { Scrollbar } from 'components/scrollbar';
-import { items } from './config';
+import { items } from './side-config';
 import { SideNavItem } from './side-nav-item';
+import { useUserRole } from 'hooks/use-userrole';
 
 export const SideNav = (props : any) => {
   const { open, onClose } = props;
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme : any) => theme.breakpoints.up('lg'));
+  const userRole = useUserRole();
 
   const content = (
     <Scrollbar
@@ -97,74 +98,29 @@ export const SideNav = (props : any) => {
               m: 0
             }}
           >
-            {items.map((item : any) => {
-              const active = item.path ? (pathname === item.path) : false;
+            {items.filter((item : any) => {
+            if (item.path === '/admin' && userRole !== 'ADMIN') {
+              return false;
+            }
+            return true;
+          }).map((item : any) => {
+            const active = item.path ? (pathname === item.path) : false;
 
-              return (
-                <SideNavItem
-                  active={active}
-                  disabled={item.disabled}
-                  external={item.external}
-                  icon={item.icon}
-                  key={item.title}
-                  path={item.path}
-                  title={item.title}
-                />
-              );
-            })}
+            return (
+              <SideNavItem
+                active={active}
+                disabled={item.disabled}
+                external={item.external}
+                icon={item.icon}
+                key={item.title}
+                path={item.path}
+                title={item.title}
+              />
+            );
+          })}
           </Stack>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
-        <Box
-          sx={{
-            px: 2,
-            py: 3
-          }}
-        >
-          <Typography
-            color="neutral.100"
-            variant="subtitle2"
-          >
-            테스트 중..
-          </Typography>
-          <Typography
-            color="neutral.500"
-            variant="body2"
-          >
-            naver 사이트로 이동
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              mt: 2,
-              mx: 'auto',
-              width: '160px',
-              '& img': {
-                width: '100%'
-              }
-            }}
-          >
-            <img
-              alt="Go to pro"
-              src="/assets/naver_logo.png"
-            />
-          </Box>
-          <Button
-            component="a"
-            endIcon={(
-              <SvgIcon fontSize="small">
-                <ArrowTopRightOnSquareIcon />
-              </SvgIcon>
-            )}
-            fullWidth
-            href="https://naver.com"
-            sx={{ mt: 2 }}
-            target="_blank"
-            variant="contained"
-          >
-            Site 이동
-          </Button>
-        </Box>
       </Box>
     </Scrollbar>
   );

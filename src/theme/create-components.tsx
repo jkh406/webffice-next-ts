@@ -6,6 +6,7 @@ import {
     paperClasses,
     tableCellClasses
   } from '@mui/material';
+import { margin } from '@mui/system';
   
   // Used only to create transitions
   const muiTheme = createTheme();
@@ -46,7 +47,10 @@ import {
           },
           textSizeLarge: {
             padding: '12px 16px'
-          }
+          },
+          sizeTest: {
+            padding: '15px 24px'
+          },
         }
       },
       MuiCard: {

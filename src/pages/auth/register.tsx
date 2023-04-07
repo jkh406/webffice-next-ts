@@ -36,8 +36,8 @@ const Page = () => {
     onSubmit: async (values : any, helpers : any) => { 
       try {
         await dispatch(joinUser({
-          userId: values.email,
-          userPw: values.password
+          user_Id: values.email,
+          user_Pw: values.password
         }));
         router.push('/');
       } catch (err : any) {

@@ -1,5 +1,4 @@
 import Head from 'next/head';
-import PlusIcon from '@heroicons/react/24/solid/PlusIcon';
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { DashboardLayout } from 'layouts/dashboard-layout';
 import { CustomSchedule } from 'sections/schedule/schedule-calendar';
@@ -12,16 +11,21 @@ const Page = () => {
   const scheduleslice = useAppSelector((state : any) => state.schedule.board);
   const user = useAppSelector(state => state.auth);
   const dispatch = useAppDispatch();
-  const { setAuthCookie } = useCookie();
+  const { auth, setAuthCookie } = useCookie();
 
   useEffect( () => {
-    if (user) {
-      console.log('user SelectSchedule', user);
+    if (user.user) {
+      localStorage.setItem('user', JSON.stringify(user.user));
       setAuthCookie(user.token);
-      const schedule = { user_ID: localStorage.getItem('user_ID'), token: user.token };
+      const schedule = { user_ID: user.user_ID, token: user.token };
+      dispatch(SelectSchedule((schedule)));
+    } else {
+      const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+      localStorage.setItem('user', JSON.stringify(storedUser));
+      const schedule = { user_ID: storedUser?.user_ID, token: auth };
       dispatch(SelectSchedule((schedule)));
     }
-  },[dispatch]);
+  },[dispatch, user.user]);
   
   return (
   <>
@@ -55,18 +59,6 @@ const Page = () => {
                 >
                 </Stack>
               </Stack>
-              <div>
-                <Button
-                  startIcon={(
-                    <SvgIcon fontSize="small">
-                      <PlusIcon />
-                    </SvgIcon>
-                  )}
-                  variant="contained"
-                >
-                  Add
-                </Button>
-              </div>
             </Stack>
             <CustomSchedule scheduleslice={scheduleslice}/>
           </Stack>

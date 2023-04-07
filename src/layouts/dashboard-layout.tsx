@@ -42,6 +42,7 @@ export const DashboardLayout = (props : any) => {
   useEffect(
     () => {
       handlePathnameChange();
+
       if(!isGuardPassed)
       {
         router
@@ -50,13 +51,10 @@ export const DashboardLayout = (props : any) => {
           query: router.asPath !== '/' ? { continueUrl: router.asPath } : undefined
         })
         .catch(console.error);
-      } else {
-        router.push("/");
-      }
+      } 
     },
     [pathname, isGuardPassed]
   );
-  console.log('isGuardPassed', isGuardPassed);
 
   return (
     <>

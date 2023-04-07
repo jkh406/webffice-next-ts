@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { addUserApi, loginUserApi, logOutUserApi } from "service/auth-api";
 
 type UserType = {
-    userId: string;
-    userPw: string;
+    user_Id: string;
+    user_Pw: string;
 };
 
 const initialState: any = {
@@ -16,7 +16,7 @@ const initialState: any = {
 // 로그인
 export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {getState, dispatch}) => {
     try {
-        const response = await loginUserApi(user.userId, user.userPw);
+        const response = await loginUserApi(user.user_Id, user.user_Pw);
         dispatch({
             type: 'login',
             payload: {
@@ -26,7 +26,6 @@ export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
           });
         return response.data;
     }catch (error: any) {
-        console.log(error);
         if (error.response.status === 400) {
             alert("아이디 혹은 비밀번호를 확인해주세요" + error)
         }else {
@@ -39,7 +38,7 @@ export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
 // 회원가입
 export const joinUser = createAsyncThunk("JOIN_USER", async (user: UserType, {getState, dispatch}) => {
     try {
-        const response = await addUserApi(user.userId, user.userPw);
+        const response = await addUserApi(user.user_Id, user.user_Pw);
         dispatch(login(response.data.data));
         alert("회원가입 성공!");
         return response.data;
@@ -53,6 +52,7 @@ export const LogoutUser = createAsyncThunk("LOGOUT_USER", async (_,{dispatch}) =
     try {
         const response = await logOutUserApi();
         if (response.status === 200 && response.data.success) {
+            localStorage.removeItem('user');
             dispatch(logout());
         }
         return response.data;
@@ -104,7 +104,7 @@ const authSlice = createSlice({
         builder.addCase(LoginUser.fulfilled, (state, action) => {
             state.isLoading = false;
             state.isAuthenticated = true;
-            state.myId = action.payload.message;
+            state.user_ID = action.payload.message;
             state.token = action.payload.data.Token;
             state.user = action.payload.data.User;
             window.localStorage.setItem("user_ID", action.payload.message);
@@ -122,7 +122,7 @@ const authSlice = createSlice({
         });
         builder.addCase(joinUser.fulfilled, (state, action) => {
             state.isLoading = false;
-            state.myId = action.payload.message;
+            state.user_ID = action.payload.message;
         });
         builder.addCase(Skip.fulfilled, (state, action) => {
             state.isLoading = false;

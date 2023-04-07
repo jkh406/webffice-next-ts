@@ -2,7 +2,7 @@ import NextLink from 'next/link';
 import PropTypes from 'prop-types';
 import { Box, ButtonBase } from '@mui/material';
 
-export const SideNavItem = (props : any) => {
+export const AdminNavItem = (props : any) => {
   const { active = false, disabled, external, icon, path, title } = props;
 
   const linkProps = path
@@ -19,7 +19,6 @@ export const SideNavItem = (props : any) => {
     : {};
 
   return (
-    <li>
       <ButtonBase
         sx={{
           alignItems: 'center',
@@ -63,12 +62,12 @@ export const SideNavItem = (props : any) => {
             color: 'neutral.400',
             flexGrow: 1,
             fontFamily: (theme) => theme.typography.fontFamily,
-            fontSize: 14,
+            fontSize: 30,
             fontWeight: 600,
             lineHeight: '24px',
             whiteSpace: 'nowrap',
             ...(active && {
-              color: 'common.white'
+              color: 'common.black'
             }),
             ...(disabled && {
               color: 'neutral.500'
@@ -78,11 +77,10 @@ export const SideNavItem = (props : any) => {
           {title}
         </Box>
       </ButtonBase>
-    </li>
   );
 };
 
-SideNavItem.propTypes = {
+AdminNavItem.propTypes = {
   active: PropTypes.bool,
   disabled: PropTypes.bool,
   external: PropTypes.bool,

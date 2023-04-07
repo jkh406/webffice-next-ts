@@ -58,7 +58,7 @@ export const AccountProfile = () => (
     </CardContent>
     <Divider />
     <CardActions>
-      <Button
+      <Button 
         fullWidth
         variant="text"
       >

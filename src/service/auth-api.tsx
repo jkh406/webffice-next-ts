@@ -10,7 +10,7 @@ export const issueTokenApi = () => {
 
 export const loginUserApi = (_email : any, _password : any) => {
     return axios.post(USER_API_BASE_URL + "/login", {
-        userId : _email, userPw : _password
+        user_Id : _email, user_Pw : _password
     }, { 
         withCredentials: true,
     });
@@ -22,13 +22,13 @@ export const logOutUserApi = () => {
     });
 }
 
-export const deleteUserApi = (userID: any) =>{
-    return axios.delete(USER_API_BASE_URL + '/' + userID);
+export const deleteUserApi = (user_Id: any) =>{
+    return axios.delete(USER_API_BASE_URL + '/' + user_Id);
 }
   
 export const addUserApi = (_email : any, _password : any) =>{
     return axios.post(USER_API_BASE_URL + "/join", {
-        userId : _email, userPw : _password
+        user_Id : _email, user_Pw : _password
     });
 }
 

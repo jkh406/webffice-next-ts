@@ -5,7 +5,6 @@ import ShoppingBagIcon from '@heroicons/react/24/solid/ShoppingBagIcon';
 import UserIcon from '@heroicons/react/24/solid/UserIcon';
 import UserPlusIcon from '@heroicons/react/24/solid/UserPlusIcon';
 import UsersIcon from '@heroicons/react/24/solid/UsersIcon';
-import XCircleIcon from '@heroicons/react/24/solid/XCircleIcon';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { SvgIcon } from '@mui/material';
 
@@ -75,7 +74,7 @@ export const items = [
   },
   {
     title: '관리자 설정',
-    path: '/admin',
+    path: '/admin/userManagement',
     icon: (
       <SvgIcon fontSize="small">
         <AdminPanelSettingsIcon />
