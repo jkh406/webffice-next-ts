@@ -2,7 +2,7 @@ import { useCookies  } from "react-cookie";
 
 export const useCookie = () => {
   const expires = new Date();
-  expires.setMinutes(expires.getMinutes() + 1);
+  expires.setMinutes(expires.getMinutes() + 30);
 
   const [cookies, setCookie, removeCookie] = useCookies(["auth"]);
 

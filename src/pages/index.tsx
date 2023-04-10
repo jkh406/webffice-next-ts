@@ -17,11 +17,12 @@ const Page = () => {
     if (user.user) {
       localStorage.setItem('user', JSON.stringify(user.user));
       setAuthCookie(user.token);
+      
       const schedule = { user_ID: user.user_ID, token: user.token };
       dispatch(SelectSchedule((schedule)));
-    } else {
+    } 
+    else {
       const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-      localStorage.setItem('user', JSON.stringify(storedUser));
       const schedule = { user_ID: storedUser?.user_ID, token: auth };
       dispatch(SelectSchedule((schedule)));
     }

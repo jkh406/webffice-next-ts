@@ -5,5 +5,3 @@ import { AppDispatch, RootState } from "store/configureStore";
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 /** useSelector를 사용할 경우, 매번 state의 타입을 지정해줘야 하기 때문에 커스터 마이징해서 사용합니다. */
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;
-
-  

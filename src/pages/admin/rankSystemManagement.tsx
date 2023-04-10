@@ -5,7 +5,7 @@ import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIc
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { useSelection } from 'hooks/use-selection';
 import { DashboardLayout } from 'layouts/dashboard-layout';
-import { CustomersTable } from 'sections/admin/admin-table';
+import { CustomersTable } from 'sections/customer/customers-table';
 import { CustomersSearch } from 'sections/admin/admin-search';
 import { applyPagination } from 'utils/apply-pagination';
 import { useUserRole } from 'hooks/use-userrole'

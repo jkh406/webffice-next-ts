@@ -1,45 +1,66 @@
-import PropTypes from 'prop-types';
-import { format } from 'date-fns';
-import {
-  Avatar,
-  Box,
-  Card,
-  Checkbox,
-  Stack,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TablePagination,
-  TableRow,
-  Typography
-} from '@mui/material';
-import { Scrollbar } from 'components/scrollbar';
-import { getInitials } from 'utils/get-initials';
+import { Avatar, Box, Card, Checkbox, Stack, Table, TableBody, TableCell, TableHead, TablePagination, TableRow, Typography, CardContent  } from '@mui/material';
+import { useCallback, useMemo, useState, useEffect } from 'react';
+import { applyPagination } from 'utils/apply-pagination';
+import { useSelection } from 'hooks/use-selection';
+import { FC } from 'react';
 
-export const CustomersTable = (props : any) => {
-  const {
-    count = 0,
-    items = [],
-    onDeselectAll,
-    onDeselectOne,
-    onPageChange = () => {},
-    onRowsPerPageChange,
-    onSelectAll,
-    onSelectOne,
-    page = 0,
-    rowsPerPage = 0,
-    selected = []
-  } = props;
+interface CustomTableProps {
+  adminslice: any;
+}
 
-  const selectedSome = (selected.length > 0) && (selected.length < items.length);
-  const selectedAll = (items.length > 0) && (selected.length === items.length);
+export const UsersTable: FC<CustomTableProps> = ({ adminslice }) => {
+  useEffect( () => {
+  },[]);
+
+  const useUserManagement = (page : any, rowsPerPage : any) => {
+    return useMemo(
+      () => {
+        return applyPagination(adminslice, page, rowsPerPage);
+      },
+      [page, rowsPerPage]
+    );
+  };
+  
+  const useUserManagementIds = (users : any) => {
+    return useMemo(
+      () => {
+        return users.map((users : any) => users.user_ID);
+      },
+      [users]
+    );
+  };
+  
+  const handlePageChange = useCallback(
+    (event : any, value : any) => {
+      setPage(value);
+    },
+    []
+  );
+
+  const handleRowsPerPageChange = useCallback(
+    (event : any) => {
+      setRowsPerPage(event.target.value);
+    },
+    []
+  );
+
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const users = useUserManagement(page, rowsPerPage);
+  const usersIds = useUserManagementIds(users);
+  const usersSelection = useSelection(usersIds);
+  const onDeselectAll = usersSelection.handleDeselectAll;
+  const onDeselectOne = usersSelection.handleDeselectOne;
+  const onSelectAll = usersSelection.handleSelectAll;
+  const onSelectOne = usersSelection.handleSelectOne;
+  const selected = usersSelection.selected;
+  const selectedSome = (selected.length > 0) && (selected.length < users.length);
+  const selectedAll = (users.length > 0) && (selected.length === users.length);
 
   return (
     <Card>
-      <Scrollbar>
-        <Box sx={{ minWidth: 800 }}>
-          <Table>
+        <Box sx={{ minWidth: 800}} >
+          <Table >
             <TableHead>
               <TableRow>
                 <TableCell padding="checkbox">
@@ -68,19 +89,21 @@ export const CustomersTable = (props : any) => {
                   Phone
                 </TableCell>
                 <TableCell>
-                  Signed Up
+                  Start in
+                </TableCell>
+                <TableCell>
+                  rank
                 </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {items.map((customer : any) => {
-                const isSelected = selected.includes(customer.id);
-                const createdAt = format(customer.createdAt, 'dd/MM/yyyy');
+              {users.map((users : any) => {
+                const isSelected = selected.includes(users.user_ID);
 
                 return (
                   <TableRow
                     hover
-                    key={customer.id}
+                    key={users.user_ID}
                     selected={isSelected}
                   >
                     <TableCell padding="checkbox">
@@ -88,9 +111,9 @@ export const CustomersTable = (props : any) => {
                         checked={isSelected}
                         onChange={(event : any) => {
                           if (event.target.checked) {
-                            onSelectOne?.(customer.id);
+                            onSelectOne?.(users.user_ID);
                           } else {
-                            onDeselectOne?.(customer.id);
+                            onDeselectOne?.(users.user_ID);
                           }
                         }}
                       />
@@ -101,25 +124,27 @@ export const CustomersTable = (props : any) => {
                         direction="row"
                         spacing={2}
                       >
-                        <Avatar src={customer.avatar}>
-                          {getInitials(customer.name)}
+                        <Avatar src={users.avatar}>
                         </Avatar>
                         <Typography variant="subtitle2">
-                          {customer.name}
+                          {users.user_name}
                         </Typography>
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {customer.email}
+                      {users.user_ID}
                     </TableCell>
                     <TableCell>
-                      {customer.address.city}, {customer.address.state}, {customer.address.country}
+                      {users.address}, {users.detail_address}
                     </TableCell>
                     <TableCell>
-                      {customer.phone}
+                      {users.phone}
                     </TableCell>
                     <TableCell>
-                      {createdAt}
+                      {users.start_date}
+                    </TableCell>
+                    <TableCell>
+                      {users.rank}
                     </TableCell>
                   </TableRow>
                 );
@@ -127,30 +152,15 @@ export const CustomersTable = (props : any) => {
             </TableBody>
           </Table>
         </Box>
-      </Scrollbar>
       <TablePagination
         component="div"
-        count={count}
-        onPageChange={onPageChange}
-        onRowsPerPageChange={onRowsPerPageChange}
+        count={adminslice.length}
+        onPageChange={handlePageChange}
+        onRowsPerPageChange={handleRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
       />
     </Card>
   );
-};
-
-CustomersTable.propTypes = {
-  count: PropTypes.number,
-  items: PropTypes.array,
-  onDeselectAll: PropTypes.func,
-  onDeselectOne: PropTypes.func,
-  onPageChange: PropTypes.func,
-  onRowsPerPageChange: PropTypes.func,
-  onSelectAll: PropTypes.func,
-  onSelectOne: PropTypes.func,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
-  selected: PropTypes.array
 };

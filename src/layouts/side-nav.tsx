@@ -104,7 +104,14 @@ export const SideNav = (props : any) => {
             }
             return true;
           }).map((item : any) => {
-            const active = item.path ? (pathname === item.path) : false;
+            let active = item.path ? (pathname === item.path) : false;
+            if(item.path?.includes('/admin/'))
+            {
+              if(pathname?.includes('/admin/'))
+              {
+                active = true;
+              }
+            }
 
             return (
               <SideNavItem

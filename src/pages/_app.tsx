@@ -8,7 +8,7 @@ import { Provider } from "react-redux";
 import { store } from "store/configureStore"
 import { createTheme } from 'theme';
 import { createEmotionCache } from 'utils/create-emotion-cache';
-import React, { useEffect } from 'react';
+import React from 'react';
 import 'styles/calendar.scss';
 
 const clientSideEmotionCache = createEmotionCache();
