@@ -19,8 +19,8 @@ export const items = [
     )
   },
   {
-    title: '전자우편',
-    path: '/customers',
+    title: '공지사항',
+    path: '/notice',
     icon: (
       <SvgIcon fontSize="small">
         <UsersIcon />
@@ -28,8 +28,8 @@ export const items = [
     )
   },
   {
-    title: 'test',
-    path: '/schedule',
+    title: 'Companies',
+    path: '/companies',
     icon: (
       <SvgIcon fontSize="small">
         <ShoppingBagIcon />
@@ -37,7 +37,7 @@ export const items = [
     )
   },
   {
-    title: '공문관리',
+    title: 'Account',
     path: '/account',
     icon: (
       <SvgIcon fontSize="small">
@@ -46,7 +46,7 @@ export const items = [
     )
   },
   {
-    title: '전자게시',
+    title: 'Setting',
     path: '/settings',
     icon: (
       <SvgIcon fontSize="small">
@@ -55,7 +55,7 @@ export const items = [
     )
   },
   {
-    title: '근태관리',
+    title: 'Login 화면',
     path: '/auth/login',
     icon: (
       <SvgIcon fontSize="small">

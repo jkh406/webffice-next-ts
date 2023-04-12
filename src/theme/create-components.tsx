@@ -283,7 +283,7 @@ import { margin } from '@mui/system';
               borderBottom: 'none',
               backgroundColor: palette.neutral[50],
               color: palette.neutral[700],
-              fontSize: 12,
+              fontSize: 22,
               fontWeight: 600,
               lineHeight: 1,
               letterSpacing: 0.5,

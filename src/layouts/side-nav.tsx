@@ -8,6 +8,8 @@ import { Scrollbar } from 'components/scrollbar';
 import { items } from './side-config';
 import { SideNavItem } from './side-nav-item';
 import { useUserRole } from 'hooks/use-userrole';
+import { useState } from 'react';
+
 
 export const SideNav = (props : any) => {
   const { open, onClose } = props;
@@ -16,17 +18,6 @@ export const SideNav = (props : any) => {
   const userRole = useUserRole();
 
   const content = (
-    <Scrollbar
-      sx={{
-        height: '100%',
-        '& .simplebar-content': {
-          height: '100%'
-        },
-        '& .simplebar-scrollbar:before': {
-          background: 'neutral.400'
-        }
-      }}
-    >
       <Box
         sx={{
           display: 'flex',
@@ -99,7 +90,7 @@ export const SideNav = (props : any) => {
             }}
           >
             {items.filter((item : any) => {
-            if (item.path === '/admin' && userRole !== 'ADMIN') {
+            if (item.path?.includes('/admin/') && userRole !== 'ADMIN') {
               return false;
             }
             return true;
@@ -125,11 +116,11 @@ export const SideNav = (props : any) => {
               />
             );
           })}
+          
           </Stack>
         </Box>
         <Divider sx={{ borderColor: 'neutral.700' }} />
       </Box>
-    </Scrollbar>
   );
 
   if (lgUp) {

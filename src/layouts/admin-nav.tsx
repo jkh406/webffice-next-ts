@@ -48,7 +48,6 @@ export const AdminNav = (props : any) => {
           })}
           </Stack>
         </Box>
-        <Divider sx={{ borderColor: 'neutral.700' }} />
       </Box>
     </>
   );

@@ -26,7 +26,7 @@ button {
   margin: 3px;
   background-color: #6f876f;
   border: 0;
-  border-radius: 3px;
+  border-radius: 30px;
   color: white;
   padding: 5px 0;
 

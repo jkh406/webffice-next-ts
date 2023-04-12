@@ -1,7 +1,9 @@
 import MagnifyingGlassIcon from '@heroicons/react/24/solid/MagnifyingGlassIcon';
 import { Card, InputAdornment, OutlinedInput, SvgIcon } from '@mui/material';
+import { useCallback, useState } from 'react';
 
-export const CustomersSearch = () => (
+export const UsersSearch = () => {
+  return (
   <Card sx={{ p: 2 }}>
     <OutlinedInput
       defaultValue=""
@@ -20,4 +22,5 @@ export const CustomersSearch = () => (
       sx={{ maxWidth: 500 }}
     />
   </Card>
-);
+  );
+};

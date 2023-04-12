@@ -7,7 +7,7 @@ const initialState: any = {
 
 export const SelectUser = createAsyncThunk("SELECT_USER", async (token: any, {getState, dispatch}) => {
     try {
-        const response = await selectUserApi(token);
+        const response = await selectUserApi();
         const payload = response.data.map((rowData: any ) => ({
             id : rowData.user_ID,
             avatar : rowData.avatar,
@@ -40,7 +40,6 @@ const adminSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder.addCase(SelectUser.fulfilled, (state, action) => {
-            console.log('selectUser extraReducers payload',action.payload);
             state.user_detail = action.payload
         });
     }

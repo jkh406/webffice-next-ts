@@ -4,23 +4,59 @@ import ArrowDownOnSquareIcon from '@heroicons/react/24/solid/ArrowDownOnSquareIc
 import { Box, Button, Container, Stack, SvgIcon, Typography } from '@mui/material';
 import { DashboardLayout } from 'layouts/dashboard-layout';
 import { UsersTable } from 'sections/admin/admin-table';
-import { CustomersSearch } from 'sections/admin/admin-search';
+import { UsersSearch } from 'sections/admin/admin-search';
 import { useUserRole } from 'hooks/use-userrole'
 import { useRouter } from 'next/router';
 import { AdminNav } from 'layouts/admin-nav';
 import { usePathname } from 'next/navigation';
-import { useAppDispatch, useAppSelector } from 'hooks/use-auth';
-import { SelectUser } from "store/slice/admin-slice"
-import { useCookie } from 'utils/cookie';
+import axios from 'axios';
 
-const Page = () => {
-  const adminSlice = useAppSelector((state : any) => state.admin.user_detail);
-  const user = useAppSelector(state => state.auth);
-  const dispatch = useAppDispatch();
+export async function getServerSideProps(context : any) {
+  const USER_API_BASE_URL = "http://localhost:8080/api/admin";
+	let cookieString = context.req ? context.req.headers.cookie : '';
+  axios.defaults.headers.Cookie = '';
+
+  cookieString = cookieString.split("; ");
+  let result : any = {};
+  for (var i = 0; i < cookieString.length; i++) {
+    var cur = cookieString[i].split("=");
+    result[cur[0]] = cur[1];
+  }
+
+  if (context.req && cookieString) {
+    axios.defaults.headers.Cookie = result.auth;
+  }
+  
+  const response = await axios.post(USER_API_BASE_URL + "/SelectUser", null, { 
+    withCredentials: true,    
+    headers: {
+     Authorization: result.auth,
+     },     
+  });
+  const payload = response.data.map((rowData: any ) => ({
+    id : rowData.user_ID,
+    avatar : rowData.avatar,
+    startDate : rowData.start_date,
+    email : rowData.user_ID,
+    name : rowData.user_name,
+    phone : rowData.phone,
+    rank : rowData.rank,
+    address : rowData.address,
+    detail_address : rowData.detail_address
+  }));
+  
+  return {
+    props: {
+      item: payload,
+    },
+  };
+}
+
+const Page = ({item} : any) => {
   const userRole = useUserRole();
   const router = useRouter();
   const pathname = usePathname();
-  const { auth } = useCookie();
+  const [openNav, setOpenNav] = useState(false);
   
   useEffect(() => {
     if(userRole && userRole !== 'ADMIN')
@@ -32,19 +68,8 @@ const Page = () => {
         })
         .catch(console.error);
     }
-    if (user.user) {
-      dispatch(SelectUser((user.token)));
-      console.log('adminSlice', adminSlice);
-    }
-    else {
-      dispatch(SelectUser((auth)));
-    }
-    
     handlePathnameChange();
-
-  }, [userRole, pathname, dispatch]);
-
-  const [openNav, setOpenNav] = useState(false);
+  }, [userRole, pathname]);
 
   const handlePathnameChange = useCallback(
     () => {
@@ -70,30 +95,30 @@ const Page = () => {
         }}
       >
         <Container maxWidth="xl">
-        <Stack spacing={2}>
-        <AdminNav 
-        onClose={() => setOpenNav(false)}
-        open={openNav}/>
-          <Stack spacing={1}>
-            <Stack
-              alignItems="center"
-              direction="row"
-              spacing={1}
-            >
-              <Button
-                color="inherit"
-                startIcon={(
-                  <SvgIcon fontSize="small">
-                    <ArrowDownOnSquareIcon />
-                  </SvgIcon>
-                )}
+          <Stack spacing={2}>
+            <AdminNav 
+              onClose={() => setOpenNav(false)}
+              open={openNav}/>
+            <Stack spacing={1}>
+              <Stack
+                alignItems="center"
+                direction="row"
+                spacing={1}
               >
+                <Button
+                  color="inherit"
+                  startIcon={(
+                    <SvgIcon fontSize="small">
+                      <ArrowDownOnSquareIcon />
+                    </SvgIcon>
+                )}
+                >
                 Export
-              </Button>
+                </Button>
+              </Stack>
             </Stack>
-        </Stack>
-            <CustomersSearch />
-            <UsersTable adminslice={adminSlice}/>
+              <UsersSearch />
+              <UsersTable item={item} />
           </Stack>
         </Container>
       </Box>

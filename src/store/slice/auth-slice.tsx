@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import axios from "axios";
 import { addUserApi, loginUserApi, logOutUserApi } from "service/auth-api";
 
 type UserType = {
@@ -24,6 +25,7 @@ export const LoginUser = createAsyncThunk("LOGIN_USER", async (user: UserType, {
               user: response.data.data.User,
             },
           });
+
         return response.data;
     }catch (error: any) {
         if (error.response.status === 400) {
@@ -51,6 +53,7 @@ export const joinUser = createAsyncThunk("JOIN_USER", async (user: UserType, {ge
 export const LogoutUser = createAsyncThunk("LOGOUT_USER", async (_,{dispatch}) => {
     try {
         const response = await logOutUserApi();
+        console.log('LogOut Sueccess + ', response);
         if (response.status === 200 && response.data.success) {
             localStorage.removeItem('user');
             dispatch(logout());

@@ -4,11 +4,12 @@ import { applyPagination } from 'utils/apply-pagination';
 import { useSelection } from 'hooks/use-selection';
 import { FC } from 'react';
 
+
 interface CustomTableProps {
   item: any;
 }
 
-export const UsersTable: FC<CustomTableProps> = ({ item } : any) => {
+export const NoticeTable: FC<CustomTableProps> = ({ item } : any) => {
   const useUserManagement = (page : any, rowsPerPage : any) => {
     return useMemo(
       () => {
@@ -42,7 +43,7 @@ export const UsersTable: FC<CustomTableProps> = ({ item } : any) => {
   );
 
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
   const users = useUserManagement(page, rowsPerPage);
   const usersIds = useUserManagementIds(users);
   const usersSelection = useSelection(usersIds);
@@ -55,41 +56,22 @@ export const UsersTable: FC<CustomTableProps> = ({ item } : any) => {
   const selectedAll = (users.length > 0) && (selected.length === users.length);
 
   return (
-    <Card>
+    <Card >
         <Box sx={{ minWidth: 800}} >
           <Table >
-            <TableHead>
-              <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedSome}
-                    onChange={(event : any) => {
-                      if (event.target.checked) {
-                        onSelectAll?.();
-                      } else {
-                        onDeselectAll?.();
-                      }
-                    }}
-                  />
+            <TableHead >
+              <TableRow >
+                <TableCell style={{ width: '10%' }}>
+                  말머리
                 </TableCell>
-                <TableCell>
-                  Name
+                <TableCell style={{ width: '50%' }}>
+                  제목
                 </TableCell>
-                <TableCell>
-                  Email
+                <TableCell style={{ width: '10%' }}>
+                  작성자
                 </TableCell>
-                <TableCell>
-                  Location
-                </TableCell>
-                <TableCell>
-                  Phone
-                </TableCell>
-                <TableCell>
-                  Start in
-                </TableCell>
-                <TableCell>
-                  rank
+                <TableCell style={{ width: '10%' }}>
+                  작성일
                 </TableCell>
               </TableRow>
             </TableHead>
@@ -103,17 +85,11 @@ export const UsersTable: FC<CustomTableProps> = ({ item } : any) => {
                     key={users.id}
                     selected={isSelected}
                   >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event : any) => {
-                          if (event.target.checked) {
-                            onSelectOne?.(users.id);
-                          } else {
-                            onDeselectOne?.(users.id);
-                          }
-                        }}
-                      />
+                    <TableCell>
+                      {users.address}, {users.detail_address}
+                    </TableCell>
+                    <TableCell>  
+                      {users.email}
                     </TableCell>
                     <TableCell>
                       <Stack
@@ -129,19 +105,7 @@ export const UsersTable: FC<CustomTableProps> = ({ item } : any) => {
                       </Stack>
                     </TableCell>
                     <TableCell>
-                      {users.email}
-                    </TableCell>
-                    <TableCell>
-                      {users.address}, {users.detail_address}
-                    </TableCell>
-                    <TableCell>
                       {users.phone}
-                    </TableCell>
-                    <TableCell>
-                      {users.startDate}
-                    </TableCell>
-                    <TableCell>
-                      {users.rank}
                     </TableCell>
                   </TableRow>
                 );
