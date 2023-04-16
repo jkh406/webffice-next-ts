@@ -77,7 +77,6 @@ export const CustomSchedule: FC<CustomScheduleProps> = ({ scheduleslice }) => {
     let title : any = prompt('이벤트의 새 제목을 입력하세요.')
     let calendarApi = selectInfo.view.calendar
     const storageUser = JSON.parse(localStorage.getItem('user') || '{}');
-    console.log('user test', user);
     setNanoValue((prev) => ({ ...prev, code: nanoid() }));
     calendarApi.unselect()
 

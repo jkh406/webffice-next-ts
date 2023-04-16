@@ -16,6 +16,7 @@ export const SideNav = (props : any) => {
   const pathname = usePathname();
   const lgUp = useMediaQuery((theme : any) => theme.breakpoints.up('lg'));
   const userRole = useUserRole();
+  console.log('userRole', userRole);
 
   const content = (
       <Box

@@ -67,7 +67,7 @@ const Page = () => {
     <>
       <Head>
         <title>
-          Login | Test Hompage
+          Login | A&B Technology
         </title>
       </Head>
       <Box

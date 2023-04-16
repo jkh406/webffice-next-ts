@@ -298,7 +298,7 @@ import { margin } from '@mui/system';
       },
       MuiTextField: {
         defaultProps: {
-          variant: 'filled'
+          variant: 'outlined'
         }
       }
     };
