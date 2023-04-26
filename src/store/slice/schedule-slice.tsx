@@ -65,7 +65,7 @@ export const DeleteSchedule = createAsyncThunk("DELETE_SCHEDULE", async (schedul
   }
 });
 
-export const scheduleSlice = createSlice({
+export const scheduleSlice : any = createSlice({
     name: 'schedule',
     initialState,
     reducers: {

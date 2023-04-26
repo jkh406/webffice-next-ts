@@ -1,22 +1,47 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getBoardListApi, getBoardListLimitApi, getBoardApi, createBoardApi, deleteBoardApi, updateBoardApi } from 'service/board-api';
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { getBoardListApi, getBoardListLimitApi, getBoardApi, createBoardApi, deleteBoardApi, updateBoardApi, getBoardCommentsApi, createCommentsApi } from 'service/board-api';
 
 type BoardState = {
-    boards: {
-        avatar: string;
-        board_no:string;
-        board_title: string;
-        board_type: string;
-        reg_tm: string;
-        user_name: string;
-        view_cnt: string;
-    },
+    board: [],
+    avatar: string;
+    board_no:string;
+    board_title: string;
+    board_type: string;
+    reg_tm: string;
+    user_name: string;
+    view_cnt: string;
     Limit: number
 }
-const initialContentsState: BoardState = {
-    boards: { avatar: '', board_no: '', board_title: '', board_type: '', reg_tm: '', user_name: '', view_cnt: ''},
+
+const initialState : BoardState = 
+  {
+    board: [],
+    avatar: '',
+    board_no: '',
+    board_title: '',
+    board_type: '',
+    reg_tm: '',
+    user_name : '',
+    view_cnt: '',
     Limit: 1
-}
+  }
+
+export const GetBoardComments = createAsyncThunk("BOARD_COMMENTS_READ", async (params : any,{dispatch, getState}) => {
+    try {
+        const response = await getBoardCommentsApi(params, params.token);
+        
+        const payload = response.data.data;
+        console.log('patload', payload)
+
+        dispatch({
+            type: 'selectComments',
+            payload
+        });
+        return response.data.data;
+    }catch (error: any) {
+        return error?.response;
+    }
+});
 
 export const getBoardLists = createAsyncThunk("BOARD_LIST_READ", async (params : any,{dispatch, getState}) => {
     try {
@@ -43,9 +68,18 @@ export const getBoardLists = createAsyncThunk("BOARD_LIST_READ", async (params :
     }
 });
 
-export const CreateBoard = createAsyncThunk("BOARD_CREATE", async (params : any,{getState}) => {
+export const CreateBoard = createAsyncThunk("BOARD_CREATE", async (params : any, thunkAPI : any) => {
     try {
-        const response = await createBoardApi(params, params.token);
+        const response = await createBoardApi(params, params.get('token'));
+        return response.data.data;
+    }catch (error: any) {
+        return error?.response;
+    }
+});
+
+export const CreateComments = createAsyncThunk("COMMENTS_CREATE", async (params : any, thunkAPI : any) => {
+    try {
+        const response = await createCommentsApi(params, params.token);
         return response.data.data;
     }catch (error: any) {
         return error?.response;
@@ -95,8 +129,12 @@ export const getBoard = createAsyncThunk("BOARD_GET_BOARD", async (boardId: numb
 
 const contentsSlice = createSlice({
     name: 'contents',
-    initialState: initialContentsState,
+    initialState: initialState,
     reducers: {
+        selectComments: (state : any, action : any) => {
+            console.log('action.payload', action.payload);
+            state.board = action.payload
+        },
         selectBoard: (state : any, action : any) => {
             state.board = action.payload
         },
@@ -111,9 +149,10 @@ const contentsSlice = createSlice({
             })
     },
     extraReducers: (builder) => {
+        builder.addCase(GetBoardComments.fulfilled, (state, action) => {
+            state.board = action.payload
+        });
         builder.addCase(getBoardLists.fulfilled, (state, action) => {
-            state.boards = action.payload.Boards;
-            state.Limit = action.payload.Limit
         });
         builder.addCase(getBoardListLimit.fulfilled, (state, action) => {
         });

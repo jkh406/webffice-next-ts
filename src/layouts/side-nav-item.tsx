@@ -10,8 +10,6 @@ import styled from 'styled-components';
 import InboxIcon from '@mui/icons-material/Inbox';
 import HorizontalRuleIcon from '@mui/icons-material/HorizontalRule';
 
-
-
 export const SideNavItem = (props : any) => {
   const [open, setOpen] = useState(true);
 
@@ -49,39 +47,64 @@ export const SideNavItem = (props : any) => {
     <li>
         {title === '관리자 설정' ? (
           <List>
-            <ListItemButton sx={{
-              pl: '0.5px',
-              pr: '16px',
-              py: '6px',
-              width: '100%',
-              height: 25,
-              color: 'neutral.400',
-              alignItems: 'center',
-              ...(active && {
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                color: 'primary.main',
-              }),
-              '&:hover': {
-                backgroundColor: 'rgba(255, 255, 255, 0.04)'
-              }
-            }}
-              onClick={handleClick}>
-              <ListItemIcon sx={{
-              color: 'neutral.400',
-              pl: '16px',
-              ...(active && {
-                color: 'primary.main'
-              }),
-            }}>
+            <ButtonBase
+          sx={{
+            alignItems: 'center',
+            borderRadius: 1,
+            display: 'flex',
+            justifyContent: 'flex-start',
+            pl: '16px',
+            pr: '16px',
+            py: '6px',
+            textAlign: 'left',
+            width: '100%',
+            ...(active && {
+              backgroundColor: 'rgba(255, 255, 255, 0.04)'
+            }),
+            '&:hover': {
+              backgroundColor: 'rgba(255, 255, 255, 0.04)'
+            }
+          }}
+          onClick={handleClick}
+        >
+          {icon && (
+            <Box
+              component="span"
+              sx={{
+                alignItems: 'center',
+                color: 'neutral.400',
+                display: 'inline-flex',
+                justifyContent: 'center',
+                mr: 2,
+                ...(active && {
+                  color: 'primary.main',
+                })
+              }}
+            >
               {icon}
-              </ListItemIcon>
-                <ListItemText sx={{
-                  ...(active && {
-                    color: 'common.white'
-                  }),
-                }}
-            primary= {title} />
-                {open ? <ExpandLess sx={{
+            </Box>
+          )}
+          <Box
+          component="span"
+          sx={{
+            color: 'neutral.400',
+            flexGrow: 1,
+            fontFamily: (theme) => theme.typography.fontFamily,
+            fontSize: 14,
+            fontWeight: 600,
+            lineHeight: '24px',
+            whiteSpace: 'nowrap',
+            ...(active && {
+              color: 'common.white'
+            }),
+            ...(disabled && {
+              color: 'neutral.500'
+            })
+          }}
+        >
+          {title}
+          </Box>
+          {open ? <ExpandLess sx={{
                   ...(active && {
                     color: 'common.white'
                   }),
@@ -90,32 +113,61 @@ export const SideNavItem = (props : any) => {
                     color: 'common.white'
                   }),
                 }}/>}
-            </ListItemButton>
-                  <Collapse in={open} timeout="auto" unmountOnExit>
-                  <List sx={{  fontSize: 14,}} component="div" disablePadding>
-                    <ListItemButton onClick={handleListItemButtonClick} sx={{ pl: 4 , fontSize: 14,}}>
-                    <ListItemIcon sx={{
-                    pl: '16px',
-                  }}>
-                    <HorizontalRuleIcon />
-                    </ListItemIcon>
-                      <ListItemText primary="사용자관리" />
-                    </ListItemButton>
+      </ButtonBase>
+                <Collapse in={open} timeout="auto" unmountOnExit>
+                  <List component="div" >
                     <ListItemButton onClick={handleListItemButtonClick} sx={{ pl: 4 }}>
                     <ListItemIcon sx={{
-                    pl: '16px',
-                  }}>
+                      color: 'neutral.400',
+                      pl: '20px',
+                      ...(active && {
+                        color: 'primary.main'
+                      }),
+                    }}>
                     <HorizontalRuleIcon />
                     </ListItemIcon>
-                      <ListItemText primary="부서조직관리" />
+                      <ListItemText sx={{
+                      color: 'neutral.400',
+                      ...(active && {
+                        color: 'common.white'
+                      }),
+                    }} primary="사용자관리" />
                     </ListItemButton>
+
                     <ListItemButton onClick={handleListItemButtonClick} sx={{ pl: 4 }}>
                     <ListItemIcon sx={{
-                    pl: '16px',
-                  }}>
+                      color: 'neutral.400',
+                      pl: '20px',
+                      ...(active && {
+                        color: 'primary.main'
+                      }),
+                    }}>
                     <HorizontalRuleIcon />
                     </ListItemIcon>
-                      <ListItemText primary="직급체계관리" />
+                      <ListItemText sx={{
+                      color: 'neutral.400',
+                      ...(active && {
+                        color: 'common.white'
+                      }),
+                    }}  primary="부서조직관리" />
+                    </ListItemButton>
+
+                    <ListItemButton onClick={handleListItemButtonClick} sx={{ pl: 4 }}>
+                    <ListItemIcon sx={{
+                      color: 'neutral.400',
+                      pl: '20px',
+                      ...(active && {
+                        color: 'primary.main'
+                      }),
+                    }}>
+                    <HorizontalRuleIcon />
+                    </ListItemIcon>
+                      <ListItemText sx={{
+                      color: 'neutral.400',
+                      ...(active && {
+                        color: 'common.white'
+                      }),
+                    }}  primary="직급체계관리" />
                     </ListItemButton>
                   </List>
                 </Collapse>

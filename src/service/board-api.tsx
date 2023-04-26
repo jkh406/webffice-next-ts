@@ -11,8 +11,28 @@ export const getBoardListApi = (params : any, token : any) => {
     });
 }
 
+export const getBoardCommentsApi = (params : any, token : any) => {
+    return axios.post(USER_API_BASE_URL + "/readBoardComments", params, { 
+        withCredentials: true,      
+        headers: {
+         Authorization: token,
+         },
+    });
+}
+
 export const createBoardApi = (params : any, token : any) => {
+    console.log('params', params);
     return axios.post(USER_API_BASE_URL + "/createBoard", params, { 
+        withCredentials: true,      
+        headers: {
+         Authorization: token,
+         "Content-Type": "multipart/form-data"
+         },
+    });
+}
+
+export const createCommentsApi = (params : any, token : any) => {
+    return axios.post(USER_API_BASE_URL + "/createComments", params, { 
         withCredentials: true,      
         headers: {
          Authorization: token,
